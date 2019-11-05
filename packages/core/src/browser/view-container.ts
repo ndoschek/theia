@@ -99,19 +99,7 @@ export class ViewContainer extends BaseWidget implements StatefulWidget, Applica
     protected init(): void {
         this.id = this.options.id;
         this.addClass('theia-view-container');
-        const layout = new PanelLayout();
-        this.layout = layout;
-        this.panel = new SplitPanel({
-            layout: new ViewContainerLayout({
-                renderer: SplitPanel.defaultRenderer,
-                orientation: this.orientation,
-                spacing: 2,
-                headerSize: ViewContainerPart.HEADER_HEIGHT,
-                animationDuration: 200
-            }, this.splitPositionHandler)
-        });
-        this.panel.node.tabIndex = -1;
-        layout.addWidget(this.panel);
+        this.initLayout();
 
         const { commandRegistry, menuRegistry, contextMenuRenderer } = this;
         this.toDispose.pushAll([
@@ -148,6 +136,22 @@ export class ViewContainer extends BaseWidget implements StatefulWidget, Applica
             const onProgress = this.progressLocationService.onProgress(this.options.progressLocationId);
             this.toDispose.push(new ProgressBar({ container: this.node, insertMode: 'prepend' }, onProgress));
         }
+    }
+
+    protected initLayout(): void {
+        const layout = new PanelLayout();
+        this.layout = layout;
+        this.panel = new SplitPanel({
+            layout: new ViewContainerLayout({
+                renderer: SplitPanel.defaultRenderer,
+                orientation: this.orientation,
+                spacing: 2,
+                headerSize: ViewContainerPart.HEADER_HEIGHT,
+                animationDuration: 200
+            }, this.splitPositionHandler)
+        });
+        this.panel.node.tabIndex = -1;
+        layout.addWidget(this.panel);
     }
 
     protected readonly toDisposeOnCurrentPart = new DisposableCollection();
