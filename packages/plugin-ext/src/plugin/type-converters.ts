@@ -730,30 +730,18 @@ export function fromShellExecution(execution: theia.ShellExecution, processTaskD
     }
 }
 
-export function getProcessExecution(processTaskDto: ProcessTaskDto): theia.ProcessExecution {
-    const execution = {} as theia.ProcessExecution;
-
-    execution.process = processTaskDto.command;
-
-    const processArgs = processTaskDto.args;
-    execution.args = processArgs ? processArgs : [];
-
-    const options = processTaskDto.options;
-    execution.options = options ? options : {};
-
-    return execution;
+export function getProcessExecution(taskDto: TaskDto): theia.ProcessExecution {
+    return new types.ProcessExecution(
+        taskDto.command,
+        taskDto.args || [],
+        taskDto.options || {});
 }
 
-export function getShellExecution(processTaskDto: ProcessTaskDto): theia.ShellExecution {
-    const execution = {} as theia.ShellExecution;
-
-    const options = processTaskDto.options;
-    execution.options = options ? options : {};
-    execution.args = processTaskDto.args;
-
-    execution.command = processTaskDto.command;
-
-    return execution;
+export function getShellExecution(taskDto: TaskDto): theia.ShellExecution {
+    return new types.ShellExecution(
+        taskDto.command || taskDto.commandLine || '',
+        taskDto.args,
+        taskDto.options || {});
 }
 
 export function getShellArgs(args: undefined | (string | theia.ShellQuotedString)[]): string[] {
