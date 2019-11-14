@@ -258,6 +258,18 @@ describe('Type converters:', () => {
             // when
             const result: theia.Task = Converter.toTask(shellTaskDto);
 
+            assert.strictEqual(result.execution instanceof types.ShellExecution, true);
+
+            if (result.execution instanceof types.ShellExecution) {
+                assert.strictEqual(result.execution.commandLine, undefined);
+
+                result.execution = {
+                    args: result.execution.args,
+                    options: result.execution.options,
+                    command: result.execution.command
+                };
+            }
+
             // then
             assert.notEqual(result, undefined);
             assert.deepEqual(result, shellPluginTask);
@@ -285,8 +297,19 @@ describe('Type converters:', () => {
             // when
             const result: theia.Task = Converter.toTask(customTaskDto);
 
+            assert.strictEqual(result.execution instanceof types.ShellExecution, true);
+
+            if (result.execution instanceof types.ShellExecution) {
+                assert.strictEqual(result.execution.commandLine, undefined);
+
+                result.execution = {
+                    args: result.execution.args,
+                    options: result.execution.options,
+                    command: result.execution.command
+                };
+            }
+
             // then
-            assert.notEqual(result, undefined);
             assert.deepEqual(result, customPluginTask);
         });
 
