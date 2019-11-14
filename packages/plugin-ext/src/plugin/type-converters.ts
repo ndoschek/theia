@@ -669,12 +669,12 @@ export function toTask(taskDto: TaskDto): theia.Task {
     result.definition = taskDefinition;
 
     if (taskType === 'process') {
-        result.execution = getProcessExecution(taskDto as ProcessTaskDto);
+        result.execution = getProcessExecution(taskDto);
     }
 
     const execution = { command, args, options };
     if (taskType === 'shell' || types.ShellExecution.is(execution)) {
-        result.execution = getShellExecution(taskDto as ProcessTaskDto);
+        result.execution = getShellExecution(taskDto);
     }
 
     if (!properties) {
