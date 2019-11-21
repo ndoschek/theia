@@ -15,16 +15,18 @@
  ********************************************************************************/
 
 import { ContainerModule } from 'inversify';
-import { WidgetFactory, bindViewContribution, FrontendApplicationContribution, ViewContainerIdentifier } from '@theia/core/lib/browser';
-import { VSCodeExtensionsWidget, VSCXInstalledList, VSCXList } from './view/vscode-extensions-widget';
+import { WidgetFactory, bindViewContribution, FrontendApplicationContribution, ViewContainerIdentifier, OpenHandler } from '@theia/core/lib/browser';
+import { VSCodeExtensionsWidget, VSCXInstalledList, VSCXList } from './view/list/vscode-extensions-widget';
 import { VSCodeExtensionsContribution } from './vscode-extensions-contribution';
-import { VSCodeExtensionsSearchbarWidget } from './view/vscode-extensions-searchbar-widget';
-import { VSCodeExtensionsListWidget } from './view/vscode-extensions-list-widget';
+import { VSCodeExtensionsSearchbarWidget } from './view/list/vscode-extensions-searchbar-widget';
+import { VSCodeExtensionsListWidget } from './view/list/vscode-extensions-list-widget';
 import { VSCodeExtensionsAPI } from './vscode-extensions-api';
 import { VSCodeExtensionsService } from './vscode-extensions-service';
 import { VSCodeExtensionsModel } from './vscode-extensions-model';
 
 import '../../src/browser/style/index.css';
+import { VSCodeExtensionOpenHandler } from './view/detail/vscode-extension-open-handler';
+import { VSCodeExtensionDetailWidgetFactory } from './view/detail/vscode-extension-detail-widget-factory';
 
 export default new ContainerModule(bind => {
     bindViewContribution(bind, VSCodeExtensionsContribution);
@@ -36,7 +38,7 @@ export default new ContainerModule(bind => {
     bind(VSCodeExtensionsAPI).toSelf().inSingletonScope();
 
     bind(VSCXInstalledList).toDynamicValue(({ container }) =>
-        VSCodeExtensionsListWidget.createWidget(container, { id: 'installed_extension_list', label: 'Installed' }));
+        VSCodeExtensionsListWidget.createWidget(container, { id: 'installed_extension_list', label: 'Open VSX Registry' }));
     bind(VSCXList).toDynamicValue(({ container }) =>
         VSCodeExtensionsListWidget.createWidget(container, { id: 'extension_list', label: 'Extensions' }));
 
@@ -49,4 +51,10 @@ export default new ContainerModule(bind => {
             return container.get(VSCodeExtensionsWidget);
         }
     })).inSingletonScope();
+
+    bind(VSCodeExtensionDetailWidgetFactory).toSelf().inSingletonScope();
+    bind(WidgetFactory).toService(VSCodeExtensionDetailWidgetFactory);
+
+    bind(VSCodeExtensionOpenHandler).toSelf().inSingletonScope();
+    bind(OpenHandler).toService(VSCodeExtensionOpenHandler);
 });

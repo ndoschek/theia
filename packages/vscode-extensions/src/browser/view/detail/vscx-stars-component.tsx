@@ -14,27 +14,28 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import { injectable, inject } from 'inversify';
-import { MessageService } from '@theia/core';
-import { AbstractViewContribution } from '@theia/core/lib/browser/shell/view-contribution';
-import { VSCodeExtensionsWidget } from './view/list/vscode-extensions-widget';
+import * as React from 'react';
 
-@injectable()
-export class VSCodeExtensionsContribution extends AbstractViewContribution<VSCodeExtensionsWidget> {
+interface ExportRatingStarsProps {
+    number: number
+}
 
-    @inject(MessageService) protected readonly messageService: MessageService;
-
-    constructor() {
-        super({
-            widgetId: VSCodeExtensionsWidget.ID,
-            widgetName: VSCodeExtensionsWidget.LABEL,
-            defaultWidgetOptions: {
-                area: 'left',
-                rank: 500
-            },
-            toggleCommandId: 'vsCodeExtensionsView:toggle',
-            toggleKeybinding: 'ctrlcmd+shift+x'
-        });
+export class VSCXStars extends React.Component<ExportRatingStarsProps> {
+    render(): JSX.Element {
+        return <React.Fragment>
+            <div className='extensionRatingStars'>
+                {this.getStar(1)}{this.getStar(2)}{this.getStar(3)}{this.getStar(4)}{this.getStar(5)}
+            </div>
+        </React.Fragment>;
     }
 
+    protected getStar(i: number): React.ReactNode {
+        return i <= this.props.number ?
+            <span className='fa fa-star' />
+            :
+            i > this.props.number && i - this.props.number < 1 ?
+                <span className='fa fa-star-half-o' />
+                :
+                <span className='fa fa-star-o' />;
+    }
 }

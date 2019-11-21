@@ -14,12 +14,30 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
+import * as React from 'react';
 import { ReactWidget } from '@theia/core/lib/browser';
+import { VSCodeExtensionDetailWidgetOptions } from './vscode-extension-detail-widget-factory';
+import { VSCXDetailHeader } from './vscx-detail-header-component';
 
 export class VSCodeExtensionDetailWidget extends ReactWidget {
 
+    constructor(protected readonly options: VSCodeExtensionDetailWidgetOptions) {
+        super();
+
+        this.addClass('vscode-extension-detail');
+
+        this.update();
+    }
+
     protected render(): React.ReactNode {
-        throw new Error('Method not implemented.');
+        return <React.Fragment>
+            <VSCXDetailHeader extension={this.options.extension} />
+            <div className='extensionDocContainer flexcontainer'>
+                <div className='extensionDocumentation'>
+                    <span dangerouslySetInnerHTML={{ __html: this.options.readMe }} />
+                </div>
+            </div>
+        </React.Fragment>;
     }
 
 }

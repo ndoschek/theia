@@ -14,80 +14,101 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-.theia-extension-detail {
+.vscode-extension-detail {
     display: flex;
     flex-direction: column;
 }
 
-.theia-extension-detail .extensionHeaderContainer {
+.vscode-extension-detail .extensionHeaderContainer {
     background: var(--theia-layout-color0);
     padding: 15px 22px;
     border-bottom: 3px solid var(--theia-border-color1);
 }
 
-.theia-extension-detail .extensionTitleContainer {
+.vscode-extension-detail .extensionTitleContainer {
     margin-bottom: 10px;
 }
 
-.theia-extension-detail .extensionButtonRow {
+.vscode-extension-detail .extensionButtonRow {
     display: flex;
 }
 
-.theia-extension-detail .extensionSubtitle {
-    font-size: var(--theia-ui-font-size3);
+.vscode-extension-detail .extensionSubtitle {
+    font-size: var(--theia-ui-font-size2);
     display: flex;
 }
 
-.theia-extension-detail .extensionName {
+.vscode-extension-detail .extensionName {
     margin-bottom: 10px;
     margin-top: 0px;
 }
 
-.theia-extension-detail .extensionAuthor {
+.vscode-extension-detail .textDivider {
     border-right: var(--theia-ui-font-color1) 1px solid;
     padding-right: 10px;
     box-sizing: border-box;
     margin-right: 10px;
 }
 
-.theia-extension-detail .extensionDescription {
-    font-size: var(--theia-ui-font-size2);
+.vscode-extension-detail .extensionRatingStars span{
+    margin: 0 2px;
+}
+
+.vscode-extension-detail .extensionDescription {
+    font-size: var(--theia-ui-font-size1);
     margin-bottom: 10px;
 }
 
-.theia-extension-detail .extensionButtonContainer .extensionButton {
+.vscode-extension-detail .extensionButtonContainer .extensionButton {
     margin-right: 10px;
 }
 
-.theia-extension-detail .extensionDocContainer {
+.vscode-extension-detail .extensionDocContainer {
     padding: 15px 22px;
     overflow-y: auto;
 }
 
-.theia-extension-detail .extensionDocumentation {
+.vscode-extension-detail .extensionDocumentation {
     color: var(--theia-ui-font-color1);
     height: 100%;
+    width: 100%;
 }
 
-.theia-extension-detail img {
+.vscode-extension-detail img {
     max-width: 100%;
 }
 
-.theia-extension-detail a {
+.vscode-extension-detail a {
     font-weight: bold;
+    text-decoration: none;
     color: var(--theia-accent-color0);
 }
 
-.theia-extension-detail code {
+.vscode-extension-detail code {
     font-size: var(--theia-code-font-size);
     line-height: var(--theia-code-line-height);
     padding: var(--theia-code-padding);
     font-family: var(--theia-code-font-family);
 }
 
-.theia-extension-detail pre code {
+.vscode-extension-detail pre code {
     background: var(--theia-layout-color2);
     display: block;
     padding: 10px;
+}
+
+.vscode-extension-detail .extensionHeaderImage .icon {
+    width: 70px;
+}
+
+.vscode-extension-detail .extensionHeaderImage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+}
+
+.vscode-extension-detail .extensionHeaderContainer {
+    display: flex;
 }
 

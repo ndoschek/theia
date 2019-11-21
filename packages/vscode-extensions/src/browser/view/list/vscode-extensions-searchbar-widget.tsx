@@ -18,7 +18,7 @@ import * as React from 'react';
 import { ReactWidget } from '@theia/core/lib/browser/widgets';
 import { injectable, postConstruct, inject } from 'inversify';
 import { DisposableCollection, Disposable } from '@theia/core/lib/common';
-import { VSCodeExtensionsService } from '../vscode-extensions-service';
+import { VSCodeExtensionsService } from '../../vscode-extensions-service';
 
 @injectable()
 export class VSCodeExtensionsSearchbarWidget extends ReactWidget {

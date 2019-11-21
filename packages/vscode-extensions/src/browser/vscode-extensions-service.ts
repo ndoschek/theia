@@ -15,10 +15,14 @@
  ********************************************************************************/
 
 import { injectable, inject, postConstruct } from 'inversify';
+import * as showdown from 'showdown';
+import * as sanitize from 'sanitize-html';
 import { DisposableCollection } from '@theia/core';
 import { VSCodeExtensionsAPI } from './vscode-extensions-api';
 import { SearchParam, VSCodeExtensionRaw, VSCodeExtension, VSCodeExtensionReviewList } from './vscode-extensions-types';
 import { VSCodeExtensionsModel } from './vscode-extensions-model';
+import { OpenerService, open } from '@theia/core/lib/browser';
+import { VSCodeExtensionUri, VSCodeExtensionDetailOpenerOptions } from './view/detail/vscode-extension-open-handler';
 
 export type ExtensionKeywords = string[];
 export const ExtensionKeywords = Symbol('ExtensionKeyword');
@@ -34,6 +38,7 @@ export class VSCodeExtensionsService {
 
     @inject(VSCodeExtensionsAPI) protected readonly api: VSCodeExtensionsAPI;
     @inject(VSCodeExtensionsModel) protected readonly model: VSCodeExtensionsModel;
+    @inject(OpenerService) protected readonly openerService: OpenerService;
 
     @postConstruct()
     protected async init(): Promise<void> {
@@ -82,8 +87,29 @@ export class VSCodeExtensionsService {
         return this.api.getExtensionReviews(reviewsUrl);
     }
 
-    async openExtensionDetail(extensionURL: string): Promise<void> {
-        const detail = await this.getExtensionDetail(extensionURL);
-        console.log('THE DETAIL', detail);
+    async openExtensionDetail(extensionRaw: VSCodeExtensionRaw): Promise<void> {
+        const extension = await this.api.getExtension(extensionRaw.url);
+        const readMe = await this.compileDocumentation(extension);
+        open(this.openerService, VSCodeExtensionUri.toUri(extension.name), {
+            mode: 'reveal',
+            extension,
+            readMe
+        } as VSCodeExtensionDetailOpenerOptions);
+    }
+
+    protected async compileDocumentation(extension: VSCodeExtension): Promise<string> {
+        if (extension.readmeUrl) {
+            const markdownConverter = new showdown.Converter({
+                noHeaderId: true,
+                strikethrough: true,
+                headerLevelStart: 2
+            });
+            const readme = await this.api.getExtensionReadMe(extension.readmeUrl);
+            const readmeHtml = markdownConverter.makeHtml(readme);
+            return sanitize(readmeHtml, {
+                allowedTags: sanitize.defaults.allowedTags.concat(['h1', 'h2', 'img'])
+            });
+        }
+        return '';
     }
 }
