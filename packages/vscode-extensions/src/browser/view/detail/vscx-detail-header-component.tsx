@@ -17,12 +17,15 @@
 import * as React from 'react';
 import { VSCodeExtension } from '../../vscode-extensions-types';
 import { VSCXStars } from './vscx-stars-component';
+import { VSCXInstallButton } from '../vscx-install-button-component';
 
 export class VSCXDetailHeader extends React.Component<VSCXDetailHeader.Props, VSCXDetailHeader.State> {
 
     constructor(props: VSCXDetailHeader.Props) {
         super(props);
     }
+
+    protected readonly onInstallButtonClicked = () => this.props.onInstallButtonClicked(this.props.extension);
 
     render(): JSX.Element {
         return <React.Fragment>
@@ -71,6 +74,7 @@ export class VSCXDetailHeader extends React.Component<VSCXDetailHeader.Props, VS
                         </div>
                     </div>
                     <div className='extensionDescription'>{this.props.extension.description}</div>
+                    <VSCXInstallButton extension={this.props.extension} onInstallButtonClicked={this.onInstallButtonClicked} />
                 </div>
             </div>
         </React.Fragment>;
@@ -80,6 +84,7 @@ export class VSCXDetailHeader extends React.Component<VSCXDetailHeader.Props, VS
 export namespace VSCXDetailHeader {
     export interface Props {
         extension: VSCodeExtension
+        onInstallButtonClicked: (extension: VSCodeExtension) => void
     }
     export interface State {
 

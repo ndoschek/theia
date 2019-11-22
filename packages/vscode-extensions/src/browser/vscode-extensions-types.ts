@@ -82,3 +82,5 @@ export interface VSCodeExtensionReviewList {
     postUrl: string;
     reviews: VSCodeExtensionReview[];
 }
+
+export type VSCodeExtensionsLocation = 'installed' | 'registry';

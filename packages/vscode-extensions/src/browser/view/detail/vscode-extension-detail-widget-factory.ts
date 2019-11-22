@@ -17,13 +17,14 @@
 import { injectable, inject } from 'inversify';
 import { WidgetFactory } from '@theia/core/lib/browser/widget-manager';
 import { VSCodeExtensionUri } from './vscode-extension-open-handler';
-import { FrontendApplication } from '@theia/core/lib/browser';
 import { VSCodeExtensionDetailWidget } from './vscode-extensions-detail-widget';
 import { VSCodeExtension } from '../../vscode-extensions-types';
+import { VSCodeExtensionsService } from '../../vscode-extensions-service';
 
 export interface VSCodeExtensionDetailWidgetOptions {
     readonly extension: VSCodeExtension;
     readonly readMe: string;
+
 }
 
 @injectable()
@@ -31,12 +32,10 @@ export class VSCodeExtensionDetailWidgetFactory implements WidgetFactory {
 
     readonly id = VSCodeExtensionUri.scheme;
 
-    constructor(
-        @inject(FrontendApplication) protected readonly app: FrontendApplication
-    ) { }
+    @inject(VSCodeExtensionsService) protected readonly service: VSCodeExtensionsService;
 
     async createWidget(options: VSCodeExtensionDetailWidgetOptions): Promise<VSCodeExtensionDetailWidget> {
-        const widget = new VSCodeExtensionDetailWidget(options);
+        const widget = new VSCodeExtensionDetailWidget(options, this.service);
         widget.id = 'vscode-extension:' + options.extension.name;
         widget.title.closable = true;
         widget.title.label = options.extension.name;

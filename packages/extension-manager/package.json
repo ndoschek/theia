@@ -12,7 +12,7 @@
     "@types/showdown": "^1.7.1",
     "request": "^2.82.0",
     "sanitize-html": "^1.14.1",
-    "showdown": "^1.7.4"
+    "showdown": "^1.9.1"
   },
   "publishConfig": {
     "access": "public"

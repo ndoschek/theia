@@ -17,12 +17,14 @@
 import { injectable, inject, postConstruct } from 'inversify';
 import * as showdown from 'showdown';
 import * as sanitize from 'sanitize-html';
-import { DisposableCollection } from '@theia/core';
+import { DisposableCollection, Emitter } from '@theia/core';
 import { VSCodeExtensionsAPI } from './vscode-extensions-api';
 import { SearchParam, VSCodeExtensionRaw, VSCodeExtension, VSCodeExtensionReviewList } from './vscode-extensions-types';
 import { VSCodeExtensionsModel } from './vscode-extensions-model';
 import { OpenerService, open } from '@theia/core/lib/browser';
 import { VSCodeExtensionUri, VSCodeExtensionDetailOpenerOptions } from './view/detail/vscode-extension-open-handler';
+import { PluginServer } from '@theia/plugin-ext';
+// import { HostedPluginSupport } from '@theia/plugin-ext/lib/hosted/browser/hosted-plugin';
 
 export type ExtensionKeywords = string[];
 export const ExtensionKeywords = Symbol('ExtensionKeyword');
@@ -36,9 +38,14 @@ export class VSCodeExtensionsService {
 
     protected readonly toDispose = new DisposableCollection();
 
+    protected readonly onUpdateSearchEmitter = new Emitter<string>();
+    readonly onUpdateSearch = this.onUpdateSearchEmitter.event;
+
     @inject(VSCodeExtensionsAPI) protected readonly api: VSCodeExtensionsAPI;
     @inject(VSCodeExtensionsModel) protected readonly model: VSCodeExtensionsModel;
     @inject(OpenerService) protected readonly openerService: OpenerService;
+    // @inject(HostedPluginSupport) protected readonly pluginSupport: HostedPluginSupport;
+    @inject(PluginServer) protected readonly pluginServer: PluginServer;
 
     @postConstruct()
     protected async init(): Promise<void> {
@@ -58,12 +65,17 @@ export class VSCodeExtensionsService {
     async updateSearch(param?: SearchParam): Promise<void> {
         const endpoint = this.createEndpoint(['-', 'search'], param && param.query ? [{ key: 'query', value: param.query }] : undefined);
         const extensions = await this.api.getExtensions(endpoint);
-        this.model.extensions = extensions;
+        this.model.registryExtensions = extensions;
+        this.onUpdateSearchEmitter.fire(param && param.query ? param.query : '');
     }
 
     async installed(): Promise<VSCodeExtensionRaw[]> {
-        // TODO
+        // this.pluginSupport.plugins
         return [];
+    }
+
+    async install(extension: VSCodeExtension): Promise<void> {
+        this.pluginServer.deploy(extension.downloadUrl);
     }
 
     async outdated(): Promise<VSCodeExtensionRaw[]> {
@@ -90,11 +102,12 @@ export class VSCodeExtensionsService {
     async openExtensionDetail(extensionRaw: VSCodeExtensionRaw): Promise<void> {
         const extension = await this.api.getExtension(extensionRaw.url);
         const readMe = await this.compileDocumentation(extension);
-        open(this.openerService, VSCodeExtensionUri.toUri(extension.name), {
+        const options: VSCodeExtensionDetailOpenerOptions = {
             mode: 'reveal',
             extension,
             readMe
-        } as VSCodeExtensionDetailOpenerOptions);
+        };
+        open(this.openerService, VSCodeExtensionUri.toUri(extension.name), options);
     }
 
     protected async compileDocumentation(extension: VSCodeExtension): Promise<string> {

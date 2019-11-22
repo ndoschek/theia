@@ -18,9 +18,10 @@ import { injectable, inject, postConstruct } from 'inversify';
 import { ViewContainer, PanelLayout, SplitPanel, ViewContainerLayout, ViewContainerPart } from '@theia/core/lib/browser';
 import { VSCodeExtensionsSearchbarWidget } from './vscode-extensions-searchbar-widget';
 import { VSCodeExtensionsListWidget } from './vscode-extensions-list-widget';
+import { VSCodeExtensionsService } from '../../vscode-extensions-service';
 
 export const VSCXInstalledList = Symbol('VSCXInstalledList');
-export const VSCXList = Symbol('VSCXList');
+export const VSCXRegistryList = Symbol('VSCXList');
 
 @injectable()
 export class VSCodeExtensionsWidget extends ViewContainer {
@@ -29,9 +30,9 @@ export class VSCodeExtensionsWidget extends ViewContainer {
     static LABEL = 'Extensions';
 
     @inject(VSCodeExtensionsSearchbarWidget) protected readonly vscxSearchbar: VSCodeExtensionsSearchbarWidget;
-
+    @inject(VSCodeExtensionsService) protected readonly service: VSCodeExtensionsService;
     @inject(VSCXInstalledList) protected readonly vscxInstalledList: VSCodeExtensionsListWidget;
-    @inject(VSCXList) protected readonly vscxList: VSCodeExtensionsListWidget;
+    @inject(VSCXRegistryList) protected readonly vscxRegistryList: VSCodeExtensionsListWidget;
 
     @postConstruct()
     protected init(): void {
@@ -39,10 +40,26 @@ export class VSCodeExtensionsWidget extends ViewContainer {
 
         this.addClass('vscode-extensions');
 
-        this.setTitleOptions({label: VSCodeExtensionsWidget.LABEL});
+        this.setTitleOptions({ label: VSCodeExtensionsWidget.LABEL });
 
-        this.addWidget(this.vscxInstalledList);
-        this.addWidget(this.vscxList);
+        this.addWidget(this.vscxInstalledList, { canHide: true });
+        const installedListPart = this.getPartFor(this.vscxInstalledList);
+        this.addWidget(this.vscxRegistryList, { canHide: true });
+        const registryListPart = this.getPartFor(this.vscxRegistryList);
+        if (registryListPart) {
+            registryListPart.setHidden(true);
+        }
+        this.service.onUpdateSearch(query => {
+            if (registryListPart && installedListPart) {
+                if (!!query) {
+                    registryListPart.setHidden(false);
+                    installedListPart.setHidden(true);
+                } else {
+                    registryListPart.setHidden(true);
+                    installedListPart.setHidden(false);
+                }
+            }
+        });
     }
 
     protected initLayout(): void {

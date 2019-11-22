@@ -16,17 +16,17 @@
 
 import { ContainerModule } from 'inversify';
 import { WidgetFactory, bindViewContribution, FrontendApplicationContribution, ViewContainerIdentifier, OpenHandler } from '@theia/core/lib/browser';
-import { VSCodeExtensionsWidget, VSCXInstalledList, VSCXList } from './view/list/vscode-extensions-widget';
+import { VSCodeExtensionsWidget, VSCXInstalledList, VSCXRegistryList } from './view/list/vscode-extensions-widget';
 import { VSCodeExtensionsContribution } from './vscode-extensions-contribution';
 import { VSCodeExtensionsSearchbarWidget } from './view/list/vscode-extensions-searchbar-widget';
 import { VSCodeExtensionsListWidget } from './view/list/vscode-extensions-list-widget';
 import { VSCodeExtensionsAPI } from './vscode-extensions-api';
 import { VSCodeExtensionsService } from './vscode-extensions-service';
 import { VSCodeExtensionsModel } from './vscode-extensions-model';
-
-import '../../src/browser/style/index.css';
 import { VSCodeExtensionOpenHandler } from './view/detail/vscode-extension-open-handler';
 import { VSCodeExtensionDetailWidgetFactory } from './view/detail/vscode-extension-detail-widget-factory';
+
+import '../../src/browser/style/index.css';
 
 export default new ContainerModule(bind => {
     bindViewContribution(bind, VSCodeExtensionsContribution);
@@ -38,9 +38,9 @@ export default new ContainerModule(bind => {
     bind(VSCodeExtensionsAPI).toSelf().inSingletonScope();
 
     bind(VSCXInstalledList).toDynamicValue(({ container }) =>
-        VSCodeExtensionsListWidget.createWidget(container, { id: 'installed_extension_list', label: 'Open VSX Registry' }));
-    bind(VSCXList).toDynamicValue(({ container }) =>
-        VSCodeExtensionsListWidget.createWidget(container, { id: 'extension_list', label: 'Extensions' }));
+        VSCodeExtensionsListWidget.createWidget(container, { id: 'installed_extension_list', label: 'Installed Extensions', location: 'installed' }));
+    bind(VSCXRegistryList).toDynamicValue(({ container }) =>
+        VSCodeExtensionsListWidget.createWidget(container, { id: 'extension_list', label: 'Open VSX Registry', location: 'registry' }));
 
     bind(WidgetFactory).toDynamicValue(ctx => ({
         id: VSCodeExtensionsWidget.ID,

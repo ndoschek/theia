@@ -14,39 +14,22 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
- import * as React from 'react';
+import * as React from 'react';
 import { VSCodeExtensionRaw } from '../../vscode-extensions-types';
- import { VSCodeExtensionsService } from '../../vscode-extensions-service';
- import { VSCodeExtensionsModel } from '../../vscode-extensions-model';
 import { VSCXListItem } from './vscx-list-item-component';
 
- export class VSCXList extends React.Component<VSCXList.Props, VSCXList.State> {
+export class VSCXList extends React.Component<VSCXList.Props> {
 
-    constructor(props: VSCXList.Props) {
-        super(props);
-
-        this.props.model.onExtensionsChanged(() => {
-            this.updateExtensions();
-        });
-
-        this.state = {
-            extensions: []
-        };
-    }
-
-    componentDidMount(): void {
-        this.updateExtensions();
-    }
-
-    protected async updateExtensions(): Promise<void> {
-        const extensions = this.props.model.extensions;
-        this.setState({ extensions });
-    }
+    protected readonly onItemClicked = (extensionRaw: VSCodeExtensionRaw) => this.props.onItemClicked(extensionRaw);
 
     render(): JSX.Element {
         return <React.Fragment>
             {
-                this.state.extensions.map(extension => <VSCXListItem service={this.props.service} key={extension.publisher + extension.name} extension={extension} />)
+                this.props.extensions && this.props.extensions.length > 0 ?
+                    this.props.extensions.map(extension =>
+                        <VSCXListItem onClick={this.onItemClicked} key={extension.publisher + extension.name} extension={extension} />)
+                    :
+                    'No Extensions Found'
             }
         </React.Fragment>;
     }
@@ -54,11 +37,7 @@ import { VSCXListItem } from './vscx-list-item-component';
 
 export namespace VSCXList {
     export interface Props {
-        model: VSCodeExtensionsModel,
-        service: VSCodeExtensionsService
-    }
-
-    export interface State {
-        extensions: VSCodeExtensionRaw[]
+        extensions?: VSCodeExtensionRaw[];
+        onItemClicked: (extension: VSCodeExtensionRaw) => void;
     }
 }

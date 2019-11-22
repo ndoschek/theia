@@ -18,10 +18,12 @@ import * as React from 'react';
 import { ReactWidget } from '@theia/core/lib/browser';
 import { VSCodeExtensionDetailWidgetOptions } from './vscode-extension-detail-widget-factory';
 import { VSCXDetailHeader } from './vscx-detail-header-component';
+import { VSCodeExtension } from '../../vscode-extensions-types';
+import { VSCodeExtensionsService } from '../../vscode-extensions-service';
 
 export class VSCodeExtensionDetailWidget extends ReactWidget {
 
-    constructor(protected readonly options: VSCodeExtensionDetailWidgetOptions) {
+    constructor(protected readonly options: VSCodeExtensionDetailWidgetOptions, protected readonly service: VSCodeExtensionsService) {
         super();
 
         this.addClass('vscode-extension-detail');
@@ -29,9 +31,13 @@ export class VSCodeExtensionDetailWidget extends ReactWidget {
         this.update();
     }
 
+    protected readonly onInstallButtonClicked = (extension: VSCodeExtension) => {
+        this.service.install(extension);
+    }
+
     protected render(): React.ReactNode {
         return <React.Fragment>
-            <VSCXDetailHeader extension={this.options.extension} />
+            <VSCXDetailHeader extension={this.options.extension} onInstallButtonClicked={this.onInstallButtonClicked} />
             <div className='extensionDocContainer flexcontainer'>
                 <div className='extensionDocumentation'>
                     <span dangerouslySetInnerHTML={{ __html: this.options.readMe }} />

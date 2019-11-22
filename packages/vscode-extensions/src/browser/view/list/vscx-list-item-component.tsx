@@ -16,12 +16,11 @@
 
  import * as React from 'react';
  import { VSCodeExtensionRaw } from '../../vscode-extensions-types';
- import { VSCodeExtensionsService } from '../../vscode-extensions-service';
 
  export class VSCXListItem extends React.Component<VSCXListItem.Props, VSCXListItem.State> {
 
     protected readonly extensionClick = () => {
-        this.props.service.openExtensionDetail(this.props.extension);
+        this.props.onClick(this.props.extension);
     }
 
     render(): JSX.Element {
@@ -62,7 +61,7 @@
 export namespace VSCXListItem {
     export interface Props {
         extension: VSCodeExtensionRaw,
-        service: VSCodeExtensionsService
+        onClick: (extension: VSCodeExtensionRaw) => void
     }
     export interface State {
 
