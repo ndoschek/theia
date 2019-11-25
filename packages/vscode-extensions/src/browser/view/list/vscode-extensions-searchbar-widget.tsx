@@ -26,12 +26,26 @@ export class VSCodeExtensionsSearchbarWidget extends ReactWidget {
     @inject(VSCodeExtensionsService) protected readonly service: VSCodeExtensionsService;
 
     protected readonly toDisposeOnSearch = new DisposableCollection();
+    protected searchComponent: VSCodeExtensionSearchComponent | null;
 
     @postConstruct()
     protected init(): void {
         this.id = 'vscode-extension-searchbar';
 
         this.update();
+    }
+
+    clear(): void {
+        if (this.searchComponent) {
+            this.searchComponent.clear();
+        }
+    }
+
+    getSearchTerm(): string {
+        if (this.searchComponent) {
+            return this.searchComponent.getSearchTerm();
+        }
+        return '';
     }
 
     protected onChange = (query: string) => {
@@ -42,7 +56,7 @@ export class VSCodeExtensionsSearchbarWidget extends ReactWidget {
     }
 
     protected render(): React.ReactNode {
-        return <VSCodeExtensionSearchComponent onChange={this.onChange} />;
+        return <VSCodeExtensionSearchComponent ref={ref => this.searchComponent = ref} onChange={this.onChange} />;
     }
 }
 
@@ -54,6 +68,14 @@ export class VSCodeExtensionSearchComponent extends React.Component<VSCodeExtens
         this.state = {
             query: ''
         };
+    }
+
+    getSearchTerm(): string {
+        return this.state.query;
+    }
+
+    clear(): void {
+        this.setState({ query: '' });
     }
 
     componentDidUpdate(): void {

@@ -29,7 +29,9 @@ export class VSCXList extends React.Component<VSCXList.Props> {
                     this.props.extensions.map(extension =>
                         <VSCXListItem onClick={this.onItemClicked} key={extension.publisher + extension.name} extension={extension} />)
                     :
-                    'No Extensions Found'
+                    <div className='extensionHeaderContainer'>
+                        No Extensions Found
+                    </div>
             }
         </React.Fragment>;
     }

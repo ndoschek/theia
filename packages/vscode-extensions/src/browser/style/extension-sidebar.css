@@ -22,7 +22,7 @@
 }
 
 #extensionSearchContainer {
-    padding: 15px;
+    padding: 15px 8px 15px 15px;
     box-sizing: border-box;
     flex-shrink: 0;
 }

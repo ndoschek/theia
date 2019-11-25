@@ -19,6 +19,7 @@ import { ViewContainer, PanelLayout, SplitPanel, ViewContainerLayout, ViewContai
 import { VSCodeExtensionsSearchbarWidget } from './vscode-extensions-searchbar-widget';
 import { VSCodeExtensionsListWidget } from './vscode-extensions-list-widget';
 import { VSCodeExtensionsService } from '../../vscode-extensions-service';
+import { VSCodeExtensionsCommands } from '../../vscode-extensions-contribution';
 
 export const VSCXInstalledList = Symbol('VSCXInstalledList');
 export const VSCXRegistryList = Symbol('VSCXList');
@@ -49,8 +50,9 @@ export class VSCodeExtensionsWidget extends ViewContainer {
         if (registryListPart) {
             registryListPart.setHidden(true);
         }
-        this.service.onUpdateSearch(query => {
+        this.service.onUpdateSearch(() => {
             if (registryListPart && installedListPart) {
+                const query = this.vscxSearchbar.getSearchTerm();
                 if (!!query) {
                     registryListPart.setHidden(false);
                     installedListPart.setHidden(true);
@@ -60,6 +62,23 @@ export class VSCodeExtensionsWidget extends ViewContainer {
                 }
             }
         });
+
+        const onDidChange = this.service.onUpdateSearch;
+        this.toolbarRegistry.registerItem({
+            id: VSCodeExtensionsCommands.CLEAR_ALL.id,
+            command: VSCodeExtensionsCommands.CLEAR_ALL.id,
+            tooltip: VSCodeExtensionsCommands.CLEAR_ALL.label,
+            priority: 1,
+            onDidChange
+        });
+    }
+
+    getSearchTerm(): string {
+        return this.vscxSearchbar.getSearchTerm();
+    }
+
+    clear(): void {
+        this.vscxSearchbar.clear();
     }
 
     protected initLayout(): void {

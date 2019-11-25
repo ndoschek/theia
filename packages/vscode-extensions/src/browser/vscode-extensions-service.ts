@@ -31,14 +31,14 @@ export const ExtensionKeywords = Symbol('ExtensionKeyword');
 
 // for now to test the extension one has to start the Registry Server via https://gitpod.io/#https://github.com/theia-ide/extension-registry
 // and copy then the workspace url plus '/api' to here
-export const API_URL = '';
+export const API_URL = 'https://8080-db80255d-1148-4e5d-a59e-f3d028b25da7.ws-eu01.gitpod.io/api';
 
 @injectable()
 export class VSCodeExtensionsService {
 
     protected readonly toDispose = new DisposableCollection();
 
-    protected readonly onUpdateSearchEmitter = new Emitter<string>();
+    protected readonly onUpdateSearchEmitter = new Emitter<void>();
     readonly onUpdateSearch = this.onUpdateSearchEmitter.event;
 
     @inject(VSCodeExtensionsAPI) protected readonly api: VSCodeExtensionsAPI;
@@ -66,7 +66,7 @@ export class VSCodeExtensionsService {
         const endpoint = this.createEndpoint(['-', 'search'], param && param.query ? [{ key: 'query', value: param.query }] : undefined);
         const extensions = await this.api.getExtensions(endpoint);
         this.model.registryExtensions = extensions;
-        this.onUpdateSearchEmitter.fire(param && param.query ? param.query : '');
+        this.onUpdateSearchEmitter.fire(undefined);
     }
 
     async installed(): Promise<VSCodeExtensionRaw[]> {
