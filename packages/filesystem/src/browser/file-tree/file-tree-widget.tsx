@@ -59,8 +59,9 @@ export class FileTreeWidget extends TreeWidget {
     }
 
     protected renderIcon(node: TreeNode, props: NodeProps): React.ReactNode {
-        if (FileStatNode.is(node)) {
-            return <div className={(node.icon || '') + ' file-icon'}></div>;
+        const icon = this.toNodeIcon(node);
+        if (icon) {
+            return <div className={icon + ' file-icon'}></div>;
         }
         // tslint:disable-next-line:no-null-keyword
         return null;
@@ -108,7 +109,7 @@ export class FileTreeWidget extends TreeWidget {
         if (event.dataTransfer) {
             let label: string;
             if (selectedNodes.length === 1) {
-                label = node.name;
+                label = this.toNodeName(node);
             } else {
                 label = String(selectedNodes.length);
             }

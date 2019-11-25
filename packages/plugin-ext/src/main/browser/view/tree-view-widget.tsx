@@ -224,8 +224,9 @@ export class TreeViewWidget extends TreeWidget {
     }
 
     protected renderIcon(node: TreeNode, props: NodeProps): React.ReactNode {
-        if (node.icon) {
-            return <div className={node.icon + ' theia-tree-view-icon'}></div>;
+        const icon = this.toNodeIcon(node);
+        if (icon) {
+            return <div className={icon + ' theia-tree-view-icon'}></div>;
         }
         return undefined;
     }
@@ -240,7 +241,8 @@ export class TreeViewWidget extends TreeWidget {
             className, id: node.id
         });
 
-        if (node.description) {
+        const description = this.toNodeDescription(node);
+        if (description) {
             attrs = {
                 ...attrs,
                 title: 'tooltip' in node ? node['tooltip'] : ''
@@ -254,7 +256,10 @@ export class TreeViewWidget extends TreeWidget {
     protected getCaption(node: TreeNode): React.ReactNode[] {
         const nodes: React.ReactNode[] = [];
 
-        let work = node.name || '';
+        const name = this.toNodeDescription(node) || '';
+        const description = this.toNodeDescription(node);
+
+        let work = name;
 
         const regex = /\[([^\[]+)\]\(([^\)]+)\)/g;
         const matchResult = work.match(regex);
@@ -264,7 +269,7 @@ export class TreeViewWidget extends TreeWidget {
                 const part = work.substring(0, work.indexOf(match));
                 nodes.push(part);
 
-                const execResult = regex.exec(node.name);
+                const execResult = regex.exec(name);
                 const link = <a href={execResult![2]}
                     target='_blank'
                     className={TREE_NODE_HYPERLINK}
@@ -276,9 +281,9 @@ export class TreeViewWidget extends TreeWidget {
         }
 
         nodes.push(<div>{work}</div>);
-        if (node.description) {
+        if (description) {
             nodes.push(<div className='theia-tree-view-description'>
-                {node.description}
+                {description}
             </div>);
         }
         return nodes;

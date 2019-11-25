@@ -64,7 +64,7 @@ export class QuickOpenWorkspace implements QuickOpenModel {
                 label: uri.path.base,
                 description: (home) ? FileSystemUtils.tildifyPath(uri.path.toString(), home) : uri.path.toString(),
                 groupLabel: `last modified ${moment(stat.lastModification).fromNow()}`,
-                iconClass: await this.labelProvider.getIcon(stat) + ' file-icon',
+                iconClass: this.labelProvider.getIcon(stat) + ' file-icon',
                 run: (mode: QuickOpenMode): boolean => {
                     if (mode !== QuickOpenMode.OPEN) {
                         return false;

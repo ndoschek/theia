@@ -37,6 +37,7 @@ import { TreeSearch } from './tree-search';
 import { ElementExt } from '@phosphor/domutils';
 import { TreeWidgetSelection } from './tree-widget-selection';
 import { MaybePromise } from '../../common/types';
+import { LabelProvider } from '../label-provider';
 
 const debounce = require('lodash.debounce');
 
@@ -155,6 +156,9 @@ export class TreeWidget extends ReactWidget implements StatefulWidget {
     @inject(SelectionService)
     protected readonly selectionService: SelectionService;
 
+    @inject(LabelProvider)
+    protected readonly labelProvider: LabelProvider;
+
     protected shouldScrollToRow = true;
 
     constructor(
@@ -214,7 +218,15 @@ export class TreeWidget extends ReactWidget implements StatefulWidget {
             this.model.onNodeRefreshed(() => this.updateDecorations()),
             this.model.onExpansionChanged(() => this.updateDecorations()),
             this.decoratorService,
-            this.decoratorService.onDidChangeDecorations(() => this.updateDecorations())
+            this.decoratorService.onDidChangeDecorations(() => this.updateDecorations()),
+            this.labelProvider.onDidChange(e => {
+                for (const row of this.rows.values()) {
+                    if (e.affects(row)) {
+                        this.forceUpdate();
+                        return;
+                    }
+                }
+            })
         ]);
         setTimeout(() => {
             this.updateRows();
@@ -537,7 +549,7 @@ export class TreeWidget extends ReactWidget implements StatefulWidget {
             };
         }
         const children: React.ReactNode[] = [];
-        const caption = node.name;
+        const caption = this.toNodeName(node);
         const highlight = this.getDecorationData(node, 'highlight')[0];
         if (highlight) {
             children.push(this.toReactNode(caption, highlight));
@@ -1211,6 +1223,18 @@ export class TreeWidget extends ReactWidget implements StatefulWidget {
         if (model) {
             this.model.restoreState(model);
         }
+    }
+
+    protected toNodeIcon(node: TreeNode): string {
+        return this.labelProvider.getIcon(node);
+    }
+
+    protected toNodeName(node: TreeNode): string {
+        return this.labelProvider.getName(node);
+    }
+
+    protected toNodeDescription(node: TreeNode): string {
+        return this.labelProvider.getLongName(node);
     }
 
 }

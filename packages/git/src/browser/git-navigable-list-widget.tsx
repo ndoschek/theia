@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 import { SELECTED_CLASS, Key, Widget } from '@theia/core/lib/browser';
-import { GitFileStatus, Repository, GitFileChange } from '../common';
+import { GitFileStatus } from '../common';
 import URI from '@theia/core/lib/common/uri';
 import { GitRepositoryProvider } from './git-repository-provider';
 import { LabelProvider } from '@theia/core/lib/browser/label-provider';
@@ -24,6 +24,7 @@ import { ElementExt } from '@phosphor/domutils';
 import { inject, injectable } from 'inversify';
 import { ReactWidget } from '@theia/core/lib/browser/widgets/react-widget';
 import * as React from 'react';
+import { GitFileChangeLabelProvider } from './git-file-change-label-provider';
 
 @injectable()
 export abstract class GitNavigableListWidget<T extends { selected?: boolean }> extends ReactWidget {
@@ -33,6 +34,8 @@ export abstract class GitNavigableListWidget<T extends { selected?: boolean }> e
 
     @inject(GitRepositoryProvider) protected readonly repositoryProvider: GitRepositoryProvider;
     @inject(LabelProvider) protected readonly labelProvider: LabelProvider;
+    @inject(GitFileChangeLabelProvider)
+    protected readonly gitLabelProvider: GitFileChangeLabelProvider;
 
     constructor() {
         super();
@@ -74,36 +77,13 @@ export abstract class GitNavigableListWidget<T extends { selected?: boolean }> e
         this.update();
     }
 
-    protected getStatusCaption(status: GitFileStatus, staged?: boolean): string {
-        return GitFileStatus.toString(status, staged);
-    }
-
     protected getAbbreviatedStatusCaption(status: GitFileStatus, staged?: boolean): string {
         return GitFileStatus.toAbbreviation(status, staged);
     }
-
-    protected relativePath(uri: URI | string): string {
-        const parsedUri = typeof uri === 'string' ? new URI(uri) : uri;
-        const repo = this.repositoryProvider.findRepository(parsedUri);
-        const relativePath = repo && Repository.relativePath(repo, parsedUri);
-        if (relativePath) {
-            return relativePath.toString();
-        }
-        return this.labelProvider.getLongName(parsedUri);
-    }
-
     protected getRepositoryLabel(uri: string): string | undefined {
         const repository = this.repositoryProvider.findRepository(new URI(uri));
         const isSelectedRepo = this.repositoryProvider.selectedRepository && repository && this.repositoryProvider.selectedRepository.localUri === repository.localUri;
         return repository && !isSelectedRepo ? this.labelProvider.getLongName(new URI(repository.localUri)) : undefined;
-    }
-
-    protected computeCaption(fileChange: GitFileChange): string {
-        let result = `${this.relativePath(fileChange.uri)} - ${this.getStatusCaption(fileChange.status, true)}`;
-        if (fileChange.oldUri) {
-            result = `${this.relativePath(fileChange.oldUri)} -> ${result}`;
-        }
-        return result;
     }
 
     protected renderHeaderRow({ name, value, classNames, title }: { name: string, value: React.ReactNode, classNames?: string[], title?: string }): React.ReactNode {

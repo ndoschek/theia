@@ -58,7 +58,7 @@ export class SampleDynamicLabelProviderContribution extends DefaultUriLabelProvi
         return new URI(element.toString());
     }
 
-    async getIcon(element: URI): Promise<string> {
+    getIcon(element: URI): string {
         const uri = this.getUri(element);
         const icon = super.getFileIcon(uri);
         if (!icon) {

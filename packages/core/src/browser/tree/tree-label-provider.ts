@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (C) 2018 Ericsson and others.
+ * Copyright (C) 2019 TypeFox and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -14,14 +14,27 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import { GitFileChange } from '../common/git-model';
+import { injectable } from 'inversify';
+import { LabelProviderContribution } from '../label-provider';
+import { TreeNode } from './tree';
 
-export interface GitFileChangeNode extends GitFileChange {
-    readonly commitSha?: string;
-    selected?: boolean;
-}
-export namespace GitFileChangeNode {
-    export function is(node: Object | undefined): node is GitFileChangeNode {
-        return !!node && 'uri' in node && 'status' in node;
+@injectable()
+export class TreeLabelProvider implements LabelProviderContribution {
+
+    canHandle(element: object): number {
+        return TreeNode.is(element) ? 50 : 0;
     }
+
+    getIcon(node: TreeNode): string | undefined {
+        return node.icon;
+    }
+
+    getName(node: TreeNode): string | undefined {
+        return node.name;
+    }
+
+    getDescription(node: TreeNode): string | undefined {
+        return node.description;
+    }
+
 }

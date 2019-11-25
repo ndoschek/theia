@@ -96,21 +96,7 @@ export class GitDiffWidget extends GitNavigableListWidget<GitFileChangeNode> imp
                 range: options.range,
                 uri: options.uri
             });
-            const fileChangeNodes: GitFileChangeNode[] = [];
-            for (const fileChange of fileChanges) {
-                const fileChangeUri = new URI(fileChange.uri);
-                const [icon, label, description] = await Promise.all([
-                    this.labelProvider.getIcon(fileChangeUri),
-                    this.labelProvider.getName(fileChangeUri),
-                    this.relativePath(fileChangeUri.parent)
-                ]);
-
-                const caption = this.computeCaption(fileChange);
-                fileChangeNodes.push({
-                    ...fileChange, icon, label, description, caption
-                });
-            }
-            this.fileChangeNodes = fileChangeNodes;
+            this.fileChangeNodes = fileChanges;
             this.update();
         }
     }
@@ -173,7 +159,7 @@ export class GitDiffWidget extends GitNavigableListWidget<GitFileChangeNode> imp
     }
     protected renderPath(): React.ReactNode {
         if (this.options.uri) {
-            const path = this.relativePath(this.options.uri);
+            const path = this.gitLabelProvider.relativePath(this.options.uri);
             if (path.length > 0) {
                 return '/' + path;
             } else {
@@ -260,9 +246,14 @@ export class GitDiffWidget extends GitNavigableListWidget<GitFileChangeNode> imp
     }
 
     protected renderGitItem(change: GitFileChangeNode): React.ReactNode {
+        const icon = this.labelProvider.getIcon(change);
+        const label = this.labelProvider.getName(change);
+        const description = this.labelProvider.getLongName(change);
+        const caption = this.gitLabelProvider.getCaption(change);
+        const statusCaption = this.gitLabelProvider.getStatusCaption(change.status, true);
         return <div key={change.uri.toString()} className={`gitItem noselect${change.selected ? ' ' + SELECTED_CLASS : ''}`}>
             <div
-                title={change.caption}
+                title={caption}
                 className='noWrapInfo'
                 onDoubleClick={() => {
                     this.revealChange(change);
@@ -270,20 +261,14 @@ export class GitDiffWidget extends GitNavigableListWidget<GitFileChangeNode> imp
                 onClick={() => {
                     this.selectNode(change);
                 }}>
-                <span className={change.icon + ' file-icon'}></span>
-                <span className='name'>{change.label + ' '}</span>
-                <span className='path'>{change.description}</span>
+                <span className={icon + ' file-icon'}></span>
+                <span className='name'>{label + ' '}</span>
+                <span className='path'>{description}</span>
             </div>
-            {
-                change.extraIconClassName ? <div
-                    title={change.caption}
-                    className={change.extraIconClassName}></div>
-                    : ''
-            }
             <div
-                title={change.caption}
+                title={caption}
                 className={'status staged ' + GitFileStatus[change.status].toLowerCase()}>
-                {this.getStatusCaption(change.status, true).charAt(0)}
+                {statusCaption.charAt(0)}
             </div>
         </div>;
     }
