@@ -50,7 +50,7 @@ export class VSCodeExtensionsService {
     @postConstruct()
     protected async init(): Promise<void> {
         this.updateSearch();
-        this.updateInstalled();
+        this.pluginSupport.onDidChangePlugins(() => this.updateInstalled());
     }
 
     protected createEndpoint(arr: string[], queries?: { key: string, value: string | number }[]): string {
@@ -70,10 +70,16 @@ export class VSCodeExtensionsService {
         this.onUpdateSearchEmitter.fire(undefined);
     }
 
-    async updateInstalled(): Promise<VSCodeExtensionRaw[]> {
+    async updateInstalled(): Promise<void> {
         const plugins = this.pluginSupport.plugins;
-        console.log('Plugins', plugins);
-        return [];
+        const rawVSCodeExtensions: VSCodeExtensionRaw[] = [];
+        await Promise.all(plugins.map(async plugin => {
+            if (plugin.model.engine.type === 'vscode') {
+                const ext = await this.api.getExtension(this.createEndpoint([plugin.model.publisher, plugin.model.name]));
+                rawVSCodeExtensions.push(ext);
+            }
+        }));
+        this.model.installedExtensions = rawVSCodeExtensions;
     }
 
     async install(extension: VSCodeExtension): Promise<void> {
