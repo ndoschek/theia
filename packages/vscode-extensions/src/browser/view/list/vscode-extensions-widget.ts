@@ -39,6 +39,12 @@ export class VSCodeExtensionsWidget extends ViewContainer {
     protected init(): void {
         super.init();
 
+        this.id = 'vscode-extensions';
+        this.title.label = 'Extensions';
+        this.title.caption = 'Extensions';
+        this.title.iconClass = 'vscode-extensions-tab-icon';
+        this.title.closable = true;
+
         this.addClass('vscode-extensions');
 
         this.setTitleOptions({ label: VSCodeExtensionsWidget.LABEL });

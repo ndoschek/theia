@@ -29,7 +29,7 @@ export class VSCXList extends React.Component<VSCXList.Props> {
                     this.props.extensions.map(extension =>
                         <VSCXListItem onClick={this.onItemClicked} key={extension.publisher + extension.name} extension={extension} />)
                     :
-                    <div className='extensionHeaderContainer'>
+                    <div className='extensionHeaderContainer noExtensionFound'>
                         No Extensions Found
                     </div>
             }

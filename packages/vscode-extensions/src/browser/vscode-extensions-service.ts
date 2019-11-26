@@ -24,14 +24,14 @@ import { VSCodeExtensionsModel } from './vscode-extensions-model';
 import { OpenerService, open } from '@theia/core/lib/browser';
 import { VSCodeExtensionUri, VSCodeExtensionDetailOpenerOptions } from './view/detail/vscode-extension-open-handler';
 import { PluginServer } from '@theia/plugin-ext';
-// import { HostedPluginSupport } from '@theia/plugin-ext/lib/hosted/browser/hosted-plugin';
+import { HostedPluginSupport } from '@theia/plugin-ext/lib/hosted/browser/hosted-plugin';
 
 export type ExtensionKeywords = string[];
 export const ExtensionKeywords = Symbol('ExtensionKeyword');
 
 // for now to test the extension one has to start the Registry Server via https://gitpod.io/#https://github.com/theia-ide/extension-registry
 // and copy then the workspace url plus '/api' to here
-export const API_URL = 'https://8080-db80255d-1148-4e5d-a59e-f3d028b25da7.ws-eu01.gitpod.io/api';
+export const API_URL = 'https://8080-c5484d3a-4b1a-4f66-81aa-c5fbc0d8ee0e.ws-eu01.gitpod-staging.com/api';
 
 @injectable()
 export class VSCodeExtensionsService {
@@ -44,12 +44,13 @@ export class VSCodeExtensionsService {
     @inject(VSCodeExtensionsAPI) protected readonly api: VSCodeExtensionsAPI;
     @inject(VSCodeExtensionsModel) protected readonly model: VSCodeExtensionsModel;
     @inject(OpenerService) protected readonly openerService: OpenerService;
-    // @inject(HostedPluginSupport) protected readonly pluginSupport: HostedPluginSupport;
+    @inject(HostedPluginSupport) protected readonly pluginSupport: HostedPluginSupport;
     @inject(PluginServer) protected readonly pluginServer: PluginServer;
 
     @postConstruct()
     protected async init(): Promise<void> {
         this.updateSearch();
+        this.updateInstalled();
     }
 
     protected createEndpoint(arr: string[], queries?: { key: string, value: string | number }[]): string {
@@ -69,8 +70,9 @@ export class VSCodeExtensionsService {
         this.onUpdateSearchEmitter.fire(undefined);
     }
 
-    async installed(): Promise<VSCodeExtensionRaw[]> {
-        // this.pluginSupport.plugins
+    async updateInstalled(): Promise<VSCodeExtensionRaw[]> {
+        const plugins = this.pluginSupport.plugins;
+        console.log('Plugins', plugins);
         return [];
     }
 

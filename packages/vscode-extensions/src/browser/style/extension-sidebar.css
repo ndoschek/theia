@@ -123,7 +123,15 @@
     flex: 3;
 }
 
-.extensions-tab-icon {
+.vscode-extensions-tab-icon {
     -webkit-mask: url('extensions.svg');
     mask: url('extensions.svg');
+}
+
+.vscode-extensions .extensionHeaderContainer.noExtensionFound {
+    font-size: var(--theia-ui-font-size1);
+}
+
+.vscode-extensions .extensionHeaderContainer.noExtensionFound:hover {
+    background: inherit;
 }

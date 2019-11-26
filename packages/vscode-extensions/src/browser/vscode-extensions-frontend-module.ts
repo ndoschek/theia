@@ -38,9 +38,19 @@ export default new ContainerModule(bind => {
     bind(VSCodeExtensionsAPI).toSelf().inSingletonScope();
 
     bind(VSCXInstalledList).toDynamicValue(({ container }) =>
-        VSCodeExtensionsListWidget.createWidget(container, { id: 'installed_extension_list', label: 'Installed Extensions', location: 'installed' }));
+        VSCodeExtensionsListWidget.createWidget(container,
+            {
+                id: 'installed_extension_list',
+                label: 'Installed Extensions',
+                location: 'installed'
+            }));
     bind(VSCXRegistryList).toDynamicValue(({ container }) =>
-        VSCodeExtensionsListWidget.createWidget(container, { id: 'extension_list', label: 'Open VSX Registry', location: 'registry' }));
+        VSCodeExtensionsListWidget.createWidget(container,
+            {
+                id: 'extension_list',
+                label: 'Open VSX Registry',
+                location: 'registry'
+            }));
 
     bind(WidgetFactory).toDynamicValue(ctx => ({
         id: VSCodeExtensionsWidget.ID,
