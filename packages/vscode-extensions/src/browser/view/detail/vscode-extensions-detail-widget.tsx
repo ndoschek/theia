@@ -34,10 +34,13 @@ export class VSCodeExtensionDetailWidget extends ReactWidget {
     protected readonly onInstallButtonClicked = (extension: VSCodeExtension) => {
         this.service.install(extension);
     }
+    protected readonly onUninstallButtonClicked = (extension: VSCodeExtension) => {
+        this.service.uninstall(extension);
+    }
 
     protected render(): React.ReactNode {
         return <React.Fragment>
-            <VSCXDetailHeader extension={this.options.extension} onInstallButtonClicked={this.onInstallButtonClicked} />
+            <VSCXDetailHeader extension={this.options.extension} onUninstallButtonClicked={this.onUninstallButtonClicked} onInstallButtonClicked={this.onInstallButtonClicked} />
             <div className='extensionDocContainer flexcontainer'>
                 <div className='extensionDocumentation'>
                     <span dangerouslySetInnerHTML={{ __html: this.options.readMe }} />

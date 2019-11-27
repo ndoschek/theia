@@ -26,6 +26,7 @@ export class VSCXDetailHeader extends React.Component<VSCXDetailHeader.Props, VS
     }
 
     protected readonly onInstallButtonClicked = () => this.props.onInstallButtonClicked(this.props.extension);
+    protected readonly onUninstallButtonClicked = () => this.props.onUninstallButtonClicked(this.props.extension);
 
     render(): JSX.Element {
         return <React.Fragment>
@@ -74,7 +75,7 @@ export class VSCXDetailHeader extends React.Component<VSCXDetailHeader.Props, VS
                         </div>
                     </div>
                     <div className='extensionDescription'>{this.props.extension.description}</div>
-                    <VSCXInstallButton extension={this.props.extension} onInstallButtonClicked={this.onInstallButtonClicked} />
+                    <VSCXInstallButton extension={this.props.extension} onUninstallButtonClicked={this.onUninstallButtonClicked} onInstallButtonClicked={this.onInstallButtonClicked} />
                 </div>
             </div>
         </React.Fragment>;
@@ -85,6 +86,7 @@ export namespace VSCXDetailHeader {
     export interface Props {
         extension: VSCodeExtension
         onInstallButtonClicked: (extension: VSCodeExtension) => void
+        onUninstallButtonClicked: (extension: VSCodeExtension) => void
     }
     export interface State {
 

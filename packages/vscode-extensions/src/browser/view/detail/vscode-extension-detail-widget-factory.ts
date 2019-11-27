@@ -24,7 +24,6 @@ import { VSCodeExtensionsService } from '../../vscode-extensions-service';
 export interface VSCodeExtensionDetailWidgetOptions {
     readonly extension: VSCodeExtension;
     readonly readMe: string;
-
 }
 
 @injectable()

@@ -35,7 +35,6 @@ export const API_URL = 'https://8080-c5484d3a-4b1a-4f66-81aa-c5fbc0d8ee0e.ws-eu0
 
 @injectable()
 export class VSCodeExtensionsService {
-
     protected readonly toDispose = new DisposableCollection();
 
     protected readonly onUpdateSearchEmitter = new Emitter<void>();
@@ -75,8 +74,13 @@ export class VSCodeExtensionsService {
         const rawVSCodeExtensions: VSCodeExtensionRaw[] = [];
         await Promise.all(plugins.map(async plugin => {
             if (plugin.model.engine.type === 'vscode') {
-                const ext = await this.api.getExtension(this.createEndpoint([plugin.model.publisher, plugin.model.name]));
-                rawVSCodeExtensions.push(ext);
+                const url = this.createEndpoint([plugin.model.publisher, plugin.model.name]);
+                const ext = await this.api.getExtension(url);
+                rawVSCodeExtensions.push({
+                    ...ext,
+                    url,
+                    installed: true
+                });
             }
         }));
         this.model.installedExtensions = rawVSCodeExtensions;
@@ -84,6 +88,10 @@ export class VSCodeExtensionsService {
 
     async install(extension: VSCodeExtension): Promise<void> {
         this.pluginServer.deploy(extension.downloadUrl);
+    }
+
+    async uninstall(extension: VSCodeExtension) {
+        console.log('UNINSTALL', extension);
     }
 
     async outdated(): Promise<VSCodeExtensionRaw[]> {
@@ -109,6 +117,7 @@ export class VSCodeExtensionsService {
 
     async openExtensionDetail(extensionRaw: VSCodeExtensionRaw): Promise<void> {
         const extension = await this.api.getExtension(extensionRaw.url);
+        extension.installed = extensionRaw.installed;
         const readMe = await this.compileDocumentation(extension);
         const options: VSCodeExtensionDetailOpenerOptions = {
             mode: 'reveal',

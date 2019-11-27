@@ -24,6 +24,9 @@ export interface VSCodeExtensionRaw {
     readonly version?: string;
     readonly averageRating?: number;
     readonly timestamp?: number;
+    installed?: boolean;
+    busy?: boolean;
+    outdated?: boolean;
 }
 
 export interface VSCodeExtension extends VSCodeExtensionRaw {

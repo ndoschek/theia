@@ -27,33 +27,34 @@ export class VSCXInstallButton extends React.Component<VSCXInstallButton.Props, 
     }
 
     protected readonly install = () => this.props.onInstallButtonClicked();
+    protected readonly uninstall = () => this.props.onUninstallButtonClicked();
 
     protected createButtons(extension: VSCodeExtension): React.ReactNode[] {
         const buttonArr: React.ReactNode[] = [];
-        // let btnLabel = 'Install';
-        // if (extension.installed) {
-        //     btnLabel = 'Uninstall';
-        // }
+        let btnLabel = 'Install';
+        if (extension.installed) {
+            btnLabel = 'Uninstall';
+        }
 
-        // const faEl = <i className='fa fa-spinner fa-pulse fa-fw'></i>;
-        // const content = extension.busy ? faEl : btnLabel;
+        const faEl = <i className='fa fa-spinner fa-pulse fa-fw'></i>;
+        const content = extension.busy ? faEl : btnLabel;
 
-        // buttonArr.push(<div
-        //     className={'theia-button extensionButton' +
-        //         (extension.busy ? ' working' : '') + ' ' +
-        //         (extension.installed && !extension.busy ? ' installed' : '') + ' ' +
-        //         (extension.outdated && !extension.busy ? ' outdated' : '')}
-        //     onClick={event => {
-        //         if (!extension.busy) {
-        //             if (extension.installed) {
-        //                 extension.uninstall();
-        //             } else {
-        //                 extension.install();
-        //             }
-        //             event.stopPropagation();
-        //         }
-        //     }}
-        // >{content}</div>);
+        buttonArr.push(<div
+            className={'theia-button extensionButton' +
+                (extension.busy ? ' working' : '') + ' ' +
+                (extension.installed && !extension.busy ? ' installed' : '') + ' ' +
+                (extension.outdated && !extension.busy ? ' outdated' : '')}
+            onClick={event => {
+                if (!extension.busy) {
+                    if (extension.installed) {
+                        this.uninstall();
+                    } else {
+                        this.install();
+                    }
+                    event.stopPropagation();
+                }
+            }}
+        >{content}</div>);
 
         // if (extension.outdated) {
         //     buttonArr.push(<div className={(extension.busy ? ' working' : '') + ' ' +
@@ -64,12 +65,6 @@ export class VSCXInstallButton extends React.Component<VSCXInstallButton.Props, 
         //             }
         //         }}>{extension.busy ? faEl : 'Update'}</div>);
         // }
-        const btnLabel = 'Install';
-        const content = btnLabel;
-        buttonArr.push(<div
-            key={'extbtn' + buttonArr.length}
-            className={'theia-button extensionButton'}
-            onClick={this.install}>{content}</div>);
         return buttonArr;
     }
 }
@@ -77,7 +72,8 @@ export class VSCXInstallButton extends React.Component<VSCXInstallButton.Props, 
 export namespace VSCXInstallButton {
     export interface Props {
         extension: VSCodeExtension,
-        onInstallButtonClicked: () => void
+        onInstallButtonClicked: () => void,
+        onUninstallButtonClicked: () => void
     }
 
     export interface States {
