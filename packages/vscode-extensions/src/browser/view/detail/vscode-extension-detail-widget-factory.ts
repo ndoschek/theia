@@ -20,6 +20,7 @@ import { VSCodeExtensionUri } from './vscode-extension-open-handler';
 import { VSCodeExtensionDetailWidget } from './vscode-extensions-detail-widget';
 import { VSCodeExtension } from '../../vscode-extensions-types';
 import { VSCodeExtensionsService } from '../../vscode-extensions-service';
+import { VSCodeExtensionsModel } from '../../vscode-extensions-model';
 
 export interface VSCodeExtensionDetailWidgetOptions {
     readonly extension: VSCodeExtension;
@@ -32,9 +33,10 @@ export class VSCodeExtensionDetailWidgetFactory implements WidgetFactory {
     readonly id = VSCodeExtensionUri.scheme;
 
     @inject(VSCodeExtensionsService) protected readonly service: VSCodeExtensionsService;
+    @inject(VSCodeExtensionsModel) protected readonly model: VSCodeExtensionsModel;
 
     async createWidget(options: VSCodeExtensionDetailWidgetOptions): Promise<VSCodeExtensionDetailWidget> {
-        const widget = new VSCodeExtensionDetailWidget(options, this.service);
+        const widget = new VSCodeExtensionDetailWidget(options, this.service, this.model);
         widget.id = 'vscode-extension:' + options.extension.name;
         widget.title.closable = true;
         widget.title.label = options.extension.name;

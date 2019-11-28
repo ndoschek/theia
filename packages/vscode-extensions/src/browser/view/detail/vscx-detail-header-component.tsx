@@ -75,7 +75,10 @@ export class VSCXDetailHeader extends React.Component<VSCXDetailHeader.Props, VS
                         </div>
                     </div>
                     <div className='extensionDescription'>{this.props.extension.description}</div>
-                    <VSCXInstallButton extension={this.props.extension} onUninstallButtonClicked={this.onUninstallButtonClicked} onInstallButtonClicked={this.onInstallButtonClicked} />
+                    <VSCXInstallButton
+                        extension={this.props.extension}
+                        onUninstallButtonClicked={this.onUninstallButtonClicked}
+                        onInstallButtonClicked={this.onInstallButtonClicked} />
                 </div>
             </div>
         </React.Fragment>;

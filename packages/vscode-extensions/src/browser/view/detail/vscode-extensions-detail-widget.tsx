@@ -20,22 +20,42 @@ import { VSCodeExtensionDetailWidgetOptions } from './vscode-extension-detail-wi
 import { VSCXDetailHeader } from './vscx-detail-header-component';
 import { VSCodeExtension } from '../../vscode-extensions-types';
 import { VSCodeExtensionsService } from '../../vscode-extensions-service';
+import { VSCodeExtensionsModel } from '../../vscode-extensions-model';
 
 export class VSCodeExtensionDetailWidget extends ReactWidget {
 
-    constructor(protected readonly options: VSCodeExtensionDetailWidgetOptions, protected readonly service: VSCodeExtensionsService) {
+    constructor(
+        protected readonly options: VSCodeExtensionDetailWidgetOptions,
+        protected readonly service: VSCodeExtensionsService,
+        protected readonly model: VSCodeExtensionsModel
+    ) {
         super();
-
         this.addClass('vscode-extension-detail');
+        service.onDidUpdateInstalled(() => {
+            this.init();
+        });
+        this.init();
+    }
 
+    protected init(): void {
+        const installed = !!this.model.getExtensionsByLocation('installed')
+            .find(ext => this.options.extension.publisher === ext.publisher && this.options.extension.name === ext.name);
+        if (installed) {
+            this.options.extension.installed = true;
+        }
+        this.options.extension.busy = false;
         this.update();
     }
 
-    protected readonly onInstallButtonClicked = (extension: VSCodeExtension) => {
+    protected readonly onInstallButtonClicked = async (extension: VSCodeExtension) => {
+        this.options.extension.busy = true;
         this.service.install(extension);
+        this.update();
     }
-    protected readonly onUninstallButtonClicked = (extension: VSCodeExtension) => {
+    protected readonly onUninstallButtonClicked = async (extension: VSCodeExtension) => {
+        this.options.extension.busy = true;
         this.service.uninstall(extension);
+        this.update();
     }
 
     protected render(): React.ReactNode {

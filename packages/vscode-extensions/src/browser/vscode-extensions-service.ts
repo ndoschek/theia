@@ -37,8 +37,11 @@ export const API_URL = 'https://8080-c5484d3a-4b1a-4f66-81aa-c5fbc0d8ee0e.ws-eu0
 export class VSCodeExtensionsService {
     protected readonly toDispose = new DisposableCollection();
 
-    protected readonly onUpdateSearchEmitter = new Emitter<void>();
-    readonly onUpdateSearch = this.onUpdateSearchEmitter.event;
+    protected readonly onDidUpdateSearchEmitter = new Emitter<void>();
+    readonly onDidUpdateSearch = this.onDidUpdateSearchEmitter.event;
+
+    protected readonly onDidUpdateInstalledEmitter = new Emitter<void>();
+    readonly onDidUpdateInstalled = this.onDidUpdateInstalledEmitter.event;
 
     @inject(VSCodeExtensionsAPI) protected readonly api: VSCodeExtensionsAPI;
     @inject(VSCodeExtensionsModel) protected readonly model: VSCodeExtensionsModel;
@@ -49,7 +52,7 @@ export class VSCodeExtensionsService {
     @postConstruct()
     protected async init(): Promise<void> {
         this.updateSearch();
-        this.pluginSupport.onDidChangePlugins(() => this.updateInstalled());
+        this.toDispose.push(this.pluginSupport.onDidChangePlugins(() => this.updateInstalled()));
     }
 
     protected createEndpoint(arr: string[], queries?: { key: string, value: string | number }[]): string {
@@ -66,7 +69,7 @@ export class VSCodeExtensionsService {
         const endpoint = this.createEndpoint(['-', 'search'], param && param.query ? [{ key: 'query', value: param.query }] : undefined);
         const extensions = await this.api.getExtensions(endpoint);
         this.model.registryExtensions = extensions;
-        this.onUpdateSearchEmitter.fire(undefined);
+        this.onDidUpdateSearchEmitter.fire(undefined);
     }
 
     async updateInstalled(): Promise<void> {
@@ -84,14 +87,18 @@ export class VSCodeExtensionsService {
             }
         }));
         this.model.installedExtensions = rawVSCodeExtensions;
+        this.onDidUpdateInstalledEmitter.fire();
     }
 
     async install(extension: VSCodeExtension): Promise<void> {
-        this.pluginServer.deploy(extension.downloadUrl);
+        await this.pluginServer.deploy(extension.downloadUrl);
     }
 
-    async uninstall(extension: VSCodeExtension) {
-        console.log('UNINSTALL', extension);
+    async uninstall(extension: VSCodeExtension): Promise<void> {
+        let res: () => void;
+        const p = new Promise<void>(r => res = r);
+        setTimeout(() => res(), 2000);
+        return p;
     }
 
     async outdated(): Promise<VSCodeExtensionRaw[]> {

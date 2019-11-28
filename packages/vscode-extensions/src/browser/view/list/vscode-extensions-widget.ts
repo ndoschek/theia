@@ -56,7 +56,7 @@ export class VSCodeExtensionsWidget extends ViewContainer {
         if (registryListPart) {
             registryListPart.setHidden(true);
         }
-        this.service.onUpdateSearch(() => {
+        this.service.onDidUpdateSearch(() => {
             if (registryListPart && installedListPart) {
                 const query = this.vscxSearchbar.getSearchTerm();
                 if (!!query) {
@@ -69,7 +69,7 @@ export class VSCodeExtensionsWidget extends ViewContainer {
             }
         });
 
-        const onDidChange = this.service.onUpdateSearch;
+        const onDidChange = this.service.onDidUpdateSearch;
         this.toolbarRegistry.registerItem({
             id: VSCodeExtensionsCommands.CLEAR_ALL.id,
             command: VSCodeExtensionsCommands.CLEAR_ALL.id,

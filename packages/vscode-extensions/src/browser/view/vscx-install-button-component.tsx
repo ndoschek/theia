@@ -38,8 +38,8 @@ export class VSCXInstallButton extends React.Component<VSCXInstallButton.Props, 
 
         const faEl = <i className='fa fa-spinner fa-pulse fa-fw'></i>;
         const content = extension.busy ? faEl : btnLabel;
-
         buttonArr.push(<div
+            key={'extensionDetailBtn' + btnLabel}
             className={'theia-button extensionButton' +
                 (extension.busy ? ' working' : '') + ' ' +
                 (extension.installed && !extension.busy ? ' installed' : '') + ' ' +
