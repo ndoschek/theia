@@ -18,7 +18,6 @@ import * as React from 'react';
 import { ReactWidget } from '@theia/core/lib/browser';
 import { VSCodeExtensionDetailWidgetOptions } from './vscode-extension-detail-widget-factory';
 import { VSCXDetailHeader } from './vscx-detail-header-component';
-import { VSCodeExtension } from '../../vscode-extensions-types';
 import { VSCodeExtensionsService } from '../../vscode-extensions-service';
 import { VSCodeExtensionsModel } from '../../vscode-extensions-model';
 
@@ -38,29 +37,13 @@ export class VSCodeExtensionDetailWidget extends ReactWidget {
     }
 
     protected init(): void {
-        const installed = !!this.model.getExtensionsByLocation('installed')
-            .find(ext => this.options.extension.publisher === ext.publisher && this.options.extension.name === ext.name);
-        if (installed) {
-            this.options.extension.installed = true;
-        }
         this.options.extension.busy = false;
-        this.update();
-    }
-
-    protected readonly onInstallButtonClicked = async (extension: VSCodeExtension) => {
-        this.options.extension.busy = true;
-        this.service.install(extension);
-        this.update();
-    }
-    protected readonly onUninstallButtonClicked = async (extension: VSCodeExtension) => {
-        this.options.extension.busy = true;
-        this.service.uninstall(extension);
         this.update();
     }
 
     protected render(): React.ReactNode {
         return <React.Fragment>
-            <VSCXDetailHeader extension={this.options.extension} onUninstallButtonClicked={this.onUninstallButtonClicked} onInstallButtonClicked={this.onInstallButtonClicked} />
+            <VSCXDetailHeader extension={this.options.extension} service={this.service} />
             <div className='extensionDocContainer flexcontainer'>
                 <div className='extensionDocumentation'>
                     <span dangerouslySetInnerHTML={{ __html: this.options.readMe }} />

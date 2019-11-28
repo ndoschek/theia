@@ -15,9 +15,10 @@
  ********************************************************************************/
 
 import * as React from 'react';
-import { VSCodeExtension } from '../../vscode-extensions-types';
+import { VSCodeExtensionPartResolved, VSCodeExtensionFullResolved } from '../../vscode-extensions-types';
 import { VSCXStars } from './vscx-stars-component';
 import { VSCXInstallButton } from '../vscx-install-button-component';
+import { VSCodeExtensionsService } from '../../vscode-extensions-service';
 
 export class VSCXDetailHeader extends React.Component<VSCXDetailHeader.Props, VSCXDetailHeader.State> {
 
@@ -25,60 +26,57 @@ export class VSCXDetailHeader extends React.Component<VSCXDetailHeader.Props, VS
         super(props);
     }
 
-    protected readonly onInstallButtonClicked = () => this.props.onInstallButtonClicked(this.props.extension);
-    protected readonly onUninstallButtonClicked = () => this.props.onUninstallButtonClicked(this.props.extension);
-
     render(): JSX.Element {
+        const extension = this.props.extension as VSCodeExtensionFullResolved;
         return <React.Fragment>
             <div className='extensionHeaderContainer'>
                 {
-                    this.props.extension.iconUrl ?
+                    extension.iconUrl ?
                         <div className='extensionHeaderImage'>
                             <div className='icon'>
-                                <img src={this.props.extension.iconUrl} />
+                                <img src={extension.iconUrl} />
                             </div>
                         </div> : ''
                 }
                 <div className='extensionMetaDataContainer'>
                     <div className='extensionTitleContainer'>
-                        <h1 className='extensionName'>{this.props.extension.name}</h1>
+                        <h1 className='extensionName'>{extension.name}</h1>
                         <div className='extensionSubtitle'>
-                            <div className='extensionAuthor'>{this.props.extension.publisher}</div>
+                            <div className='extensionAuthor'>{extension.publisher}</div>
                             <span className='textDivider' />
-                            <div className='extensionVersion'>{this.props.extension.version}</div>
+                            <div className='extensionVersion'>{extension.version}</div>
                             {
-                                this.props.extension.averageRating ?
+                                extension.averageRating ?
                                     <React.Fragment>
                                         <span className='textDivider' />
                                         <div className='extensionRatingStars'>
-                                            <VSCXStars number={this.props.extension.averageRating} />
+                                            <VSCXStars number={extension.averageRating} />
                                         </div>
                                     </React.Fragment>
                                     : ''
                             }
                             {
-                                this.props.extension.repository ?
+                                extension.repository ?
                                     <React.Fragment>
                                         <span className='textDivider' />
-                                        <a href={this.props.extension.repository} target='_blank'>Repository</a>
+                                        <a href={extension.repository} target='_blank'>Repository</a>
                                     </React.Fragment>
                                     : ''
                             }
                             {
-                                this.props.extension.license ?
+                                extension.license ?
                                     <React.Fragment>
                                         <span className='textDivider' />
-                                        {this.props.extension.license}
+                                        {extension.license}
                                     </React.Fragment>
                                     : ''
                             }
                         </div>
                     </div>
-                    <div className='extensionDescription'>{this.props.extension.description}</div>
+                    <div className='extensionDescription'>{extension.description}</div>
                     <VSCXInstallButton
-                        extension={this.props.extension}
-                        onUninstallButtonClicked={this.onUninstallButtonClicked}
-                        onInstallButtonClicked={this.onInstallButtonClicked} />
+                        service={this.props.service}
+                        extension={this.props.extension} />
                 </div>
             </div>
         </React.Fragment>;
@@ -87,9 +85,8 @@ export class VSCXDetailHeader extends React.Component<VSCXDetailHeader.Props, VS
 
 export namespace VSCXDetailHeader {
     export interface Props {
-        extension: VSCodeExtension
-        onInstallButtonClicked: (extension: VSCodeExtension) => void
-        onUninstallButtonClicked: (extension: VSCodeExtension) => void
+        extension: VSCodeExtensionPartResolved
+        service: VSCodeExtensionsService
     }
     export interface State {
 

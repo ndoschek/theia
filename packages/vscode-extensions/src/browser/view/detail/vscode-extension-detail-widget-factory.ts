@@ -18,12 +18,12 @@ import { injectable, inject } from 'inversify';
 import { WidgetFactory } from '@theia/core/lib/browser/widget-manager';
 import { VSCodeExtensionUri } from './vscode-extension-open-handler';
 import { VSCodeExtensionDetailWidget } from './vscode-extensions-detail-widget';
-import { VSCodeExtension } from '../../vscode-extensions-types';
+import { VSCodeExtensionPartResolved } from '../../vscode-extensions-types';
 import { VSCodeExtensionsService } from '../../vscode-extensions-service';
 import { VSCodeExtensionsModel } from '../../vscode-extensions-model';
 
 export interface VSCodeExtensionDetailWidgetOptions {
-    readonly extension: VSCodeExtension;
+    readonly extension: VSCodeExtensionPartResolved;
     readonly readMe: string;
 }
 

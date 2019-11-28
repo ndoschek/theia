@@ -15,19 +15,19 @@
  ********************************************************************************/
 
 import * as React from 'react';
-import { VSCodeExtensionRaw } from '../../vscode-extensions-types';
+import { VSCodeExtensionPart } from '../../vscode-extensions-types';
 import { VSCXListItem } from './vscx-list-item-component';
+import { VSCodeExtensionsService } from '../../vscode-extensions-service';
+import { VSCodeExtensionsModel } from '../../vscode-extensions-model';
 
 export class VSCXList extends React.Component<VSCXList.Props> {
-
-    protected readonly onItemClicked = (extensionRaw: VSCodeExtensionRaw) => this.props.onItemClicked(extensionRaw);
 
     render(): JSX.Element {
         return <React.Fragment>
             {
                 this.props.extensions && this.props.extensions.length > 0 ?
                     this.props.extensions.map(extension =>
-                        <VSCXListItem onClick={this.onItemClicked} key={extension.publisher + extension.name} extension={extension} />)
+                        <VSCXListItem key={extension.publisher + extension.name} model={this.props.model} service={this.props.service} extension={extension} />)
                     :
                     <div className='extensionHeaderContainer noExtensionFound'>
                         No Extensions Found
@@ -39,7 +39,8 @@ export class VSCXList extends React.Component<VSCXList.Props> {
 
 export namespace VSCXList {
     export interface Props {
-        extensions?: VSCodeExtensionRaw[];
-        onItemClicked: (extension: VSCodeExtensionRaw) => void;
+        extensions?: VSCodeExtensionPart[];
+        service: VSCodeExtensionsService;
+        model: VSCodeExtensionsModel;
     }
 }

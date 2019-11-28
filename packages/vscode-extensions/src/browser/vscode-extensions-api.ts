@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 import { injectable } from 'inversify';
-import { VSCodeExtensionRaw, VSCodeExtension, VSCodeExtensionReviewList } from './vscode-extensions-types';
+import { VSCodeExtensionPart, VSCodeExtensionFull, VSCodeExtensionReviewList } from './vscode-extensions-types';
 
 export interface ExtensionRegistryAPIRequest<T> {
     endpoint: string,
@@ -38,20 +38,20 @@ export class VSCodeExtensionsAPI {
         return await req.operation(response);
     }
 
-    async getExtensions(endpoint: string): Promise<VSCodeExtensionRaw[]> {
-        const extensions = await this.run<VSCodeExtensionRaw[]>({
+    async getExtensions(endpoint: string): Promise<VSCodeExtensionPart[]> {
+        const extensions = await this.run<VSCodeExtensionPart[]>({
             method: 'GET',
             endpoint,
             operation: async response => {
-                const resp = await response.json() as { offset: number; extensions: VSCodeExtensionRaw[] };
+                const resp = await response.json() as { offset: number; extensions: VSCodeExtensionPart[] };
                 return resp.extensions;
             }
         });
         return extensions;
     }
 
-    async getExtension(endpoint: string): Promise<VSCodeExtension> {
-        const ext = await this.run<VSCodeExtension>({
+    async getExtension(endpoint: string): Promise<VSCodeExtensionFull> {
+        const ext = await this.run<VSCodeExtensionFull>({
             method: 'GET',
             endpoint,
             operation: async response => await response.json()

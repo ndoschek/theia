@@ -15,21 +15,28 @@
  ********************************************************************************/
 
 import * as React from 'react';
-import { VSCodeExtension } from '../vscode-extensions-types';
+import { VSCodeExtensionPartResolved } from '../vscode-extensions-types';
+import { VSCodeExtensionsService } from '../vscode-extensions-service';
 
 export class VSCXInstallButton extends React.Component<VSCXInstallButton.Props, VSCXInstallButton.States> {
     render(): JSX.Element {
         return <div className='extensionButtonContainer'>
             <div className='extensionButtonRow'>
-                {this.createButtons(this.props.extension)}
+                {this.createButtons(this.props.extension as VSCodeExtensionPartResolved)}
             </div>
         </div>;
     }
 
-    protected readonly install = () => this.props.onInstallButtonClicked();
-    protected readonly uninstall = () => this.props.onUninstallButtonClicked();
+    protected readonly onInstallButtonClicked = async () => {
+        this.props.extension.busy = true;
+        this.props.service.install(this.props.extension);
+    }
+    protected readonly onUninstallButtonClicked = async () => {
+        this.props.extension.busy = true;
+        this.props.service.uninstall(this.props.extension);
+    }
 
-    protected createButtons(extension: VSCodeExtension): React.ReactNode[] {
+    protected createButtons(extension: VSCodeExtensionPartResolved): React.ReactNode[] {
         const buttonArr: React.ReactNode[] = [];
         let btnLabel = 'Install';
         if (extension.installed) {
@@ -47,9 +54,9 @@ export class VSCXInstallButton extends React.Component<VSCXInstallButton.Props, 
             onClick={event => {
                 if (!extension.busy) {
                     if (extension.installed) {
-                        this.uninstall();
+                        this.onUninstallButtonClicked();
                     } else {
-                        this.install();
+                        this.onInstallButtonClicked();
                     }
                     event.stopPropagation();
                 }
@@ -71,9 +78,8 @@ export class VSCXInstallButton extends React.Component<VSCXInstallButton.Props, 
 
 export namespace VSCXInstallButton {
     export interface Props {
-        extension: VSCodeExtension,
-        onInstallButtonClicked: () => void,
-        onUninstallButtonClicked: () => void
+        extension: VSCodeExtensionPartResolved,
+        service: VSCodeExtensionsService
     }
 
     export interface States {

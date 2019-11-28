@@ -16,7 +16,7 @@
  ********************************************************************************/
 
 import { injectable } from 'inversify';
-import { VSCodeExtensionRaw, VSCodeExtensionsLocation } from './vscode-extensions-types';
+import { VSCodeExtensionPart, VSCodeExtensionsLocation } from './vscode-extensions-types';
 import { Emitter } from '@theia/core';
 
 @injectable()
@@ -24,20 +24,20 @@ export class VSCodeExtensionsModel {
     protected readonly extensionsChangedEmitter = new Emitter<void>();
     readonly onExtensionsChanged = this.extensionsChangedEmitter.event;
 
-    protected _registryExtensions: VSCodeExtensionRaw[] = [];
-    protected _installedExtensions: VSCodeExtensionRaw[] = [];
+    protected _registryExtensions: VSCodeExtensionPart[] = [];
+    protected _installedExtensions: VSCodeExtensionPart[] = [];
 
-    set registryExtensions(registryExtensions: VSCodeExtensionRaw[]) {
+    set registryExtensions(registryExtensions: VSCodeExtensionPart[]) {
         this._registryExtensions = registryExtensions;
         this.extensionsChangedEmitter.fire(undefined);
     }
 
-    set installedExtensions(installedExtensions: VSCodeExtensionRaw[]) {
+    set installedExtensions(installedExtensions: VSCodeExtensionPart[]) {
         this._installedExtensions = installedExtensions;
         this.extensionsChangedEmitter.fire(undefined);
     }
 
-    getExtensionsByLocation(location: VSCodeExtensionsLocation): VSCodeExtensionRaw[] {
+    getExtensionsByLocation(location: VSCodeExtensionsLocation): VSCodeExtensionPart[] {
         switch (location) {
             case 'registry': return this._registryExtensions;
             case 'installed': return this._installedExtensions;

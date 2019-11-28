@@ -19,7 +19,7 @@ import * as showdown from 'showdown';
 import * as sanitize from 'sanitize-html';
 import { DisposableCollection, Emitter } from '@theia/core';
 import { VSCodeExtensionsAPI } from './vscode-extensions-api';
-import { SearchParam, VSCodeExtensionRaw, VSCodeExtension, VSCodeExtensionReviewList } from './vscode-extensions-types';
+import { SearchParam, VSCodeExtensionPart, VSCodeExtensionFull, VSCodeExtensionReviewList, VSCodeExtensionPartResolved } from './vscode-extensions-types';
 import { VSCodeExtensionsModel } from './vscode-extensions-model';
 import { OpenerService, open } from '@theia/core/lib/browser';
 import { VSCodeExtensionUri, VSCodeExtensionDetailOpenerOptions } from './view/detail/vscode-extension-open-handler';
@@ -74,15 +74,14 @@ export class VSCodeExtensionsService {
 
     async updateInstalled(): Promise<void> {
         const plugins = this.pluginSupport.plugins;
-        const rawVSCodeExtensions: VSCodeExtensionRaw[] = [];
+        const rawVSCodeExtensions: VSCodeExtensionPart[] = [];
         await Promise.all(plugins.map(async plugin => {
             if (plugin.model.engine.type === 'vscode') {
                 const url = this.createEndpoint([plugin.model.publisher, plugin.model.name]);
                 const ext = await this.api.getExtension(url);
                 rawVSCodeExtensions.push({
                     ...ext,
-                    url,
-                    installed: true
+                    url
                 });
             }
         }));
@@ -90,26 +89,26 @@ export class VSCodeExtensionsService {
         this.onDidUpdateInstalledEmitter.fire();
     }
 
-    async install(extension: VSCodeExtension): Promise<void> {
+    async install(extension: VSCodeExtensionPart): Promise<void> {
         await this.pluginServer.deploy(extension.downloadUrl);
     }
 
-    async uninstall(extension: VSCodeExtension): Promise<void> {
+    async uninstall(extension: VSCodeExtensionPart): Promise<void> {
         let res: () => void;
         const p = new Promise<void>(r => res = r);
         setTimeout(() => res(), 2000);
         return p;
     }
 
-    async outdated(): Promise<VSCodeExtensionRaw[]> {
-        const result: VSCodeExtensionRaw[] = [];
+    async outdated(): Promise<VSCodeExtensionPart[]> {
+        const result: VSCodeExtensionPart[] = [];
         const promises: Promise<void>[] = [];
         // TODO get outdated extensions
         await Promise.all(promises);
         return result;
     }
 
-    async getExtensionDetail(extensionURL: string): Promise<VSCodeExtension> {
+    async getExtensionDetail(extensionURL: string): Promise<VSCodeExtensionFull> {
         return this.api.getExtension(extensionURL);
     }
 
@@ -122,19 +121,19 @@ export class VSCodeExtensionsService {
         return this.api.getExtensionReviews(reviewsUrl);
     }
 
-    async openExtensionDetail(extensionRaw: VSCodeExtensionRaw): Promise<void> {
+    async openExtensionDetail(extensionRaw: VSCodeExtensionPart): Promise<void> {
         const extension = await this.api.getExtension(extensionRaw.url);
-        extension.installed = extensionRaw.installed;
+        const extensionResolved = new VSCodeExtensionPartResolved(extension, this.model);
         const readMe = await this.compileDocumentation(extension);
         const options: VSCodeExtensionDetailOpenerOptions = {
             mode: 'reveal',
-            extension,
+            extension: extensionResolved,
             readMe
         };
         open(this.openerService, VSCodeExtensionUri.toUri(extension.name), options);
     }
 
-    protected async compileDocumentation(extension: VSCodeExtension): Promise<string> {
+    protected async compileDocumentation(extension: VSCodeExtensionFull): Promise<string> {
         if (extension.readmeUrl) {
             const markdownConverter = new showdown.Converter({
                 noHeaderId: true,

@@ -14,25 +14,24 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-export interface VSCodeExtensionRaw {
+import { VSCodeExtensionsModel } from './vscode-extensions-model';
+
+export class VSCodeExtensionPart {
     readonly name: string;
     readonly publisher: string;
     readonly url: string;
+    readonly downloadUrl: string;
     readonly description?: string;
     readonly iconUrl?: string;
     readonly displayName?: string;
     readonly version?: string;
     readonly averageRating?: number;
     readonly timestamp?: number;
-    installed?: boolean;
-    busy?: boolean;
-    outdated?: boolean;
 }
 
-export interface VSCodeExtension extends VSCodeExtensionRaw {
+export class VSCodeExtensionFull extends VSCodeExtensionPart {
     readonly publisherUrl: string;
     readonly reviewsUrl: string;
-    readonly downloadUrl: string;
     readonly reviewCount: number;
     readonly error?: string;
     readonly readmeUrl?: string;
@@ -52,6 +51,24 @@ export interface VSCodeExtension extends VSCodeExtensionRaw {
     readonly dependencies?: ExtensionReference[];
     readonly bundledExtensions?: ExtensionReference[];
 }
+
+export class VSCodeExtensionPartResolved extends VSCodeExtensionPart {
+    busy?: boolean;
+    outdated?: boolean;
+
+    constructor(extension: VSCodeExtensionPart, protected model: VSCodeExtensionsModel) {
+        super();
+        Object.assign(this, extension);
+    }
+
+    get installed(): boolean {
+        const installed = !!this.model.getExtensionsByLocation('installed')
+            .find(ext => this.publisher === ext.publisher && this.name === ext.name);
+        return installed;
+    }
+}
+
+export type VSCodeExtensionFullResolved = VSCodeExtensionPartResolved & VSCodeExtensionFull;
 
 export interface Badge {
     url: string;

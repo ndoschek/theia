@@ -15,16 +15,18 @@
  ********************************************************************************/
 
  import * as React from 'react';
- import { VSCodeExtensionRaw } from '../../vscode-extensions-types';
+ import { VSCodeExtensionPartResolved, VSCodeExtensionPart } from '../../vscode-extensions-types';
+import { VSCXInstallButton } from '../vscx-install-button-component';
+import { VSCodeExtensionsService } from '../../vscode-extensions-service';
+import { VSCodeExtensionsModel } from '../../vscode-extensions-model';
 
  export class VSCXListItem extends React.Component<VSCXListItem.Props, VSCXListItem.State> {
 
-    protected readonly extensionClick = () => {
-        this.props.onClick(this.props.extension);
-    }
+    protected readonly extensionClick = () => this.props.service.openExtensionDetail(this.props.extension);
 
     render(): JSX.Element {
-        const { extension } = this.props;
+        const { extension, service, model } = this.props;
+        const extensionResolved = new VSCodeExtensionPartResolved(extension, model);
         const tooltip = extension.description;
         const icon = extension.iconUrl;
         return <React.Fragment>
@@ -49,6 +51,7 @@
                             </div>
                             <div className='row flexcontainer'>
                                 <div className='extensionAuthor noWrapInfo flexcontainer'>{extension.publisher}</div>
+                                <VSCXInstallButton service={service} extension={extensionResolved}/>
                             </div>
                         </div>
                     </div>
@@ -60,8 +63,9 @@
 
 export namespace VSCXListItem {
     export interface Props {
-        extension: VSCodeExtensionRaw,
-        onClick: (extension: VSCodeExtensionRaw) => void
+        service: VSCodeExtensionsService,
+        model: VSCodeExtensionsModel,
+        extension: VSCodeExtensionPart,
     }
     export interface State {
 

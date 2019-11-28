@@ -21,7 +21,7 @@ import { injectable, interfaces, Container, inject, postConstruct } from 'invers
 import { VSCodeExtensionsService } from '../../vscode-extensions-service';
 import { VSCodeExtensionsModel } from '../../vscode-extensions-model';
 import { VSCXList } from './vscx-list-component';
-import { VSCodeExtensionRaw, VSCodeExtensionsLocation } from '../../vscode-extensions-types';
+import { VSCodeExtensionPart, VSCodeExtensionsLocation } from '../../vscode-extensions-types';
 
 export const VSCodeExtensionsListOptions = Symbol('VSCodeExtensionsListOptions');
 
@@ -45,7 +45,7 @@ export class VSCodeExtensionsListWidget extends ReactWidget {
         return VSCodeExtensionsListWidget.createContainer(parent, options).get(VSCodeExtensionsListWidget);
     }
 
-    protected extensions: VSCodeExtensionRaw[];
+    protected extensions: VSCodeExtensionPart[];
 
     @inject(VSCodeExtensionsListOptions) protected readonly options: VSCodeExtensionsListOptions;
     @inject(VSCodeExtensionsService) protected readonly service: VSCodeExtensionsService;
@@ -62,11 +62,9 @@ export class VSCodeExtensionsListWidget extends ReactWidget {
         });
     }
 
-    protected readonly onListItemClicked = (extensionRaw: VSCodeExtensionRaw) => this.service.openExtensionDetail(extensionRaw);
-
     protected render(): React.ReactNode {
         return <React.Fragment>
-            <VSCXList extensions={this.extensions} onItemClicked={this.onListItemClicked} />
+            <VSCXList extensions={this.extensions} model={this.model} service={this.service} />
         </React.Fragment>;
     }
 
