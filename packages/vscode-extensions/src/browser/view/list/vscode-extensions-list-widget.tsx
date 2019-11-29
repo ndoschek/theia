@@ -22,6 +22,8 @@ import { VSCodeExtensionsService } from '../../vscode-extensions-service';
 import { VSCodeExtensionsModel } from '../../vscode-extensions-model';
 import { VSCXList } from './vscx-list-component';
 import { VSCodeExtensionPart, VSCodeExtensionsLocation } from '../../vscode-extensions-types';
+import { ProgressLocationService } from '@theia/core/lib/browser/progress-location-service';
+import { ProgressService } from '@theia/core/lib/common';
 
 export const VSCodeExtensionsListOptions = Symbol('VSCodeExtensionsListOptions');
 
@@ -50,6 +52,8 @@ export class VSCodeExtensionsListWidget extends ReactWidget {
     @inject(VSCodeExtensionsListOptions) protected readonly options: VSCodeExtensionsListOptions;
     @inject(VSCodeExtensionsService) protected readonly service: VSCodeExtensionsService;
     @inject(VSCodeExtensionsModel) protected readonly model: VSCodeExtensionsModel;
+    @inject(ProgressLocationService) protected readonly progressLocationService: ProgressLocationService;
+    @inject(ProgressService) protected readonly progressService: ProgressService;
 
     @postConstruct()
     protected init(): void {
@@ -64,7 +68,12 @@ export class VSCodeExtensionsListWidget extends ReactWidget {
 
     protected render(): React.ReactNode {
         return <React.Fragment>
-            <VSCXList extensions={this.extensions} model={this.model} service={this.service} />
+            <VSCXList
+                progressLocation='vscode-extensions-list'
+                progressService={this.progressService}
+                extensions={this.extensions}
+                model={this.model}
+                service={this.service} />
         </React.Fragment>;
     }
 

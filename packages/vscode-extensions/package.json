@@ -14,7 +14,7 @@
     "access": "public"
   },
   "keywords": [
-    "theia-vscode-extensions"
+    "theia-extension"
   ],
   "theiaExtensions": [
     {

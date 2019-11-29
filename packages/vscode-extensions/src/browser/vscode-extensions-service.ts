@@ -19,7 +19,7 @@ import * as showdown from 'showdown';
 import * as sanitize from 'sanitize-html';
 import { DisposableCollection, Emitter } from '@theia/core';
 import { VSCodeExtensionsAPI } from './vscode-extensions-api';
-import { SearchParam, VSCodeExtensionPart, VSCodeExtensionFull, VSCodeExtensionReviewList, VSCodeExtensionPartResolved } from './vscode-extensions-types';
+import { SearchParam, VSCodeExtensionPart, VSCodeExtensionFull, VSCodeExtensionReviewList } from './vscode-extensions-types';
 import { VSCodeExtensionsModel } from './vscode-extensions-model';
 import { OpenerService, open } from '@theia/core/lib/browser';
 import { VSCodeExtensionUri, VSCodeExtensionDetailOpenerOptions } from './view/detail/vscode-extension-open-handler';
@@ -31,7 +31,7 @@ export const ExtensionKeywords = Symbol('ExtensionKeyword');
 
 // for now to test the extension one has to start the Registry Server via https://gitpod.io/#https://github.com/theia-ide/extension-registry
 // and copy then the workspace url plus '/api' to here
-export const API_URL = 'https://8080-c5484d3a-4b1a-4f66-81aa-c5fbc0d8ee0e.ws-eu01.gitpod-staging.com/api';
+export const API_URL = 'https://8080-cf7d7977-531a-412f-94ca-628682426783.ws-eu01.gitpod.io/api';
 
 @injectable()
 export class VSCodeExtensionsService {
@@ -96,7 +96,7 @@ export class VSCodeExtensionsService {
     async uninstall(extension: VSCodeExtensionPart): Promise<void> {
         let res: () => void;
         const p = new Promise<void>(r => res = r);
-        setTimeout(() => res(), 2000);
+        setTimeout(() => res(), 3000);
         return p;
     }
 
@@ -122,18 +122,14 @@ export class VSCodeExtensionsService {
     }
 
     async openExtensionDetail(extensionRaw: VSCodeExtensionPart): Promise<void> {
-        const extension = await this.api.getExtension(extensionRaw.url);
-        const extensionResolved = new VSCodeExtensionPartResolved(extension, this.model);
-        const readMe = await this.compileDocumentation(extension);
         const options: VSCodeExtensionDetailOpenerOptions = {
             mode: 'reveal',
-            extension: extensionResolved,
-            readMe
+            url: extensionRaw.url
         };
-        open(this.openerService, VSCodeExtensionUri.toUri(extension.name), options);
+        open(this.openerService, VSCodeExtensionUri.toUri(extensionRaw.name), options);
     }
 
-    protected async compileDocumentation(extension: VSCodeExtensionFull): Promise<string> {
+    async compileDocumentation(extension: VSCodeExtensionFull): Promise<string> {
         if (extension.readmeUrl) {
             const markdownConverter = new showdown.Converter({
                 noHeaderId: true,

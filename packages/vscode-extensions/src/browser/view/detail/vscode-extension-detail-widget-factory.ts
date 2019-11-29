@@ -18,13 +18,14 @@ import { injectable, inject } from 'inversify';
 import { WidgetFactory } from '@theia/core/lib/browser/widget-manager';
 import { VSCodeExtensionUri } from './vscode-extension-open-handler';
 import { VSCodeExtensionDetailWidget } from './vscode-extensions-detail-widget';
-import { VSCodeExtensionPartResolved } from '../../vscode-extensions-types';
+import { VSCodeExtensionPartResolved, VSCodeExtensionFullResolved } from '../../vscode-extensions-types';
 import { VSCodeExtensionsService } from '../../vscode-extensions-service';
 import { VSCodeExtensionsModel } from '../../vscode-extensions-model';
+import { ProgressLocationService } from '@theia/core/lib/browser/progress-location-service';
+import { ProgressService } from '@theia/core/lib/common';
 
 export interface VSCodeExtensionDetailWidgetOptions {
-    readonly extension: VSCodeExtensionPartResolved;
-    readonly readMe: string;
+    readonly url: string
 }
 
 @injectable()
@@ -34,12 +35,19 @@ export class VSCodeExtensionDetailWidgetFactory implements WidgetFactory {
 
     @inject(VSCodeExtensionsService) protected readonly service: VSCodeExtensionsService;
     @inject(VSCodeExtensionsModel) protected readonly model: VSCodeExtensionsModel;
+    @inject(ProgressLocationService) protected readonly progressLocationService: ProgressLocationService;
+    @inject(ProgressService) protected readonly progressService: ProgressService;
 
     async createWidget(options: VSCodeExtensionDetailWidgetOptions): Promise<VSCodeExtensionDetailWidget> {
-        const widget = new VSCodeExtensionDetailWidget(options, this.service, this.model);
-        widget.id = 'vscode-extension:' + options.extension.name;
+        const extension = await this.service.getExtensionDetail(options.url);
+        const extensionResolved = new VSCodeExtensionPartResolved(extension, this.model) as VSCodeExtensionFullResolved;
+        const readMe = await this.service.compileDocumentation(extension);
+
+        const widget = new VSCodeExtensionDetailWidget(
+            extensionResolved, readMe, this.service, this.model, this.progressService, this.progressLocationService);
+        widget.id = 'vscode-extension:' + extension.name;
         widget.title.closable = true;
-        widget.title.label = options.extension.name;
+        widget.title.label = extension.name;
         widget.title.iconClass = 'fa fa-puzzle-piece';
         return widget;
     }

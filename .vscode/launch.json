@@ -60,7 +60,8 @@
         "--port=3000",
         "--no-cluster",
         "--app-project-path=${workspaceRoot}/examples/browser",
-        "--plugins=local-dir:plugins"
+        "--plugins=local-dir:plugins",
+        "--hosted-plugin-inspect=9339"
       ],
       "env": {
         "NODE_ENV": "development",

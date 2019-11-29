@@ -53,7 +53,6 @@ export class VSCodeExtensionFull extends VSCodeExtensionPart {
 }
 
 export class VSCodeExtensionPartResolved extends VSCodeExtensionPart {
-    busy?: boolean;
     outdated?: boolean;
 
     constructor(extension: VSCodeExtensionPart, protected model: VSCodeExtensionsModel) {

@@ -17,8 +17,18 @@
 import * as React from 'react';
 import { VSCodeExtensionPartResolved } from '../vscode-extensions-types';
 import { VSCodeExtensionsService } from '../vscode-extensions-service';
+import { ProgressService } from '@theia/core/lib/common';
 
 export class VSCXInstallButton extends React.Component<VSCXInstallButton.Props, VSCXInstallButton.States> {
+
+    constructor(props: VSCXInstallButton.Props) {
+        super(props);
+
+        this.state = {
+            busy: false
+        };
+    }
+
     render(): JSX.Element {
         return <div className='extensionButtonContainer'>
             <div className='extensionButtonRow'>
@@ -27,13 +37,17 @@ export class VSCXInstallButton extends React.Component<VSCXInstallButton.Props, 
         </div>;
     }
 
-    protected readonly onInstallButtonClicked = async () => {
-        this.props.extension.busy = true;
-        this.props.service.install(this.props.extension);
-    }
-    protected readonly onUninstallButtonClicked = async () => {
-        this.props.extension.busy = true;
-        this.props.service.uninstall(this.props.extension);
+    protected readonly onInstallButtonClicked = async (kind: 'install' | 'uninstall') => {
+        this.setState({ busy: true });
+        const progress = await this.props.progressService.showProgress({
+            text: `${kind}ing ${this.props.extension.displayName || this.props.extension.name}`,
+            options: {
+                location: this.props.progressLocation
+            }
+        });
+        await this.props.service[kind](this.props.extension);
+        progress.cancel();
+        this.setState({ busy: false });
     }
 
     protected createButtons(extension: VSCodeExtensionPartResolved): React.ReactNode[] {
@@ -42,36 +56,25 @@ export class VSCXInstallButton extends React.Component<VSCXInstallButton.Props, 
         if (extension.installed) {
             btnLabel = 'Uninstall';
         }
+        if (extension.installed && this.state.busy) {
+            btnLabel = 'Uninstalling';
+        } else if (!extension.installed && this.state.busy) {
+            btnLabel = 'Installing';
+        }
 
-        const faEl = <i className='fa fa-spinner fa-pulse fa-fw'></i>;
-        const content = extension.busy ? faEl : btnLabel;
         buttonArr.push(<div
             key={'extensionDetailBtn' + btnLabel}
             className={'theia-button extensionButton' +
-                (extension.busy ? ' working' : '') + ' ' +
-                (extension.installed && !extension.busy ? ' installed' : '') + ' ' +
-                (extension.outdated && !extension.busy ? ' outdated' : '')}
+                (this.state.busy ? ' working' : '') + ' ' +
+                (extension.installed && !this.state.busy ? ' installed' : '') + ' ' +
+                (extension.outdated && !this.state.busy ? ' outdated' : '')}
             onClick={event => {
-                if (!extension.busy) {
-                    if (extension.installed) {
-                        this.onUninstallButtonClicked();
-                    } else {
-                        this.onInstallButtonClicked();
-                    }
+                if (!this.state.busy) {
+                    this.onInstallButtonClicked(extension.installed ? 'uninstall' : 'install');
                     event.stopPropagation();
                 }
             }}
-        >{content}</div>);
-
-        // if (extension.outdated) {
-        //     buttonArr.push(<div className={(extension.busy ? ' working' : '') + ' ' +
-        //                          'theia-button extensionButton' + (extension.outdated && !extension.busy ? ' outdated' : '')}
-        //         onClick={event => {
-        //             if (!extension.busy) {
-        //                 extension.update();
-        //             }
-        //         }}>{extension.busy ? faEl : 'Update'}</div>);
-        // }
+        >{btnLabel}</div>);
         return buttonArr;
     }
 }
@@ -79,10 +82,12 @@ export class VSCXInstallButton extends React.Component<VSCXInstallButton.Props, 
 export namespace VSCXInstallButton {
     export interface Props {
         extension: VSCodeExtensionPartResolved,
-        service: VSCodeExtensionsService
+        service: VSCodeExtensionsService,
+        progressService: ProgressService,
+        progressLocation: string
     }
 
     export interface States {
-
+        busy: boolean;
     }
 }

@@ -16,39 +16,48 @@
 
 import * as React from 'react';
 import { ReactWidget } from '@theia/core/lib/browser';
-import { VSCodeExtensionDetailWidgetOptions } from './vscode-extension-detail-widget-factory';
 import { VSCXDetailHeader } from './vscx-detail-header-component';
 import { VSCodeExtensionsService } from '../../vscode-extensions-service';
 import { VSCodeExtensionsModel } from '../../vscode-extensions-model';
+import { ProgressService } from '@theia/core/lib/common';
+import { ProgressLocationService } from '@theia/core/lib/browser/progress-location-service';
+import { VSCodeExtensionFullResolved } from '../../vscode-extensions-types';
 
 export class VSCodeExtensionDetailWidget extends ReactWidget {
 
     constructor(
-        protected readonly options: VSCodeExtensionDetailWidgetOptions,
+        protected readonly extension: VSCodeExtensionFullResolved,
+        protected readonly readMe: string,
         protected readonly service: VSCodeExtensionsService,
-        protected readonly model: VSCodeExtensionsModel
+        protected readonly model: VSCodeExtensionsModel,
+        protected readonly progressService: ProgressService,
+        protected readonly progressLocationService: ProgressLocationService
     ) {
         super();
         this.addClass('vscode-extension-detail');
-        service.onDidUpdateInstalled(() => {
-            this.init();
-        });
-        this.init();
-    }
 
-    protected init(): void {
-        this.options.extension.busy = false;
+        this.id = extension.publisher + '-' + extension.name + '-' + 'detail';
+
+        service.onDidUpdateInstalled(() => {
+            this.update();
+        });
         this.update();
     }
 
     protected render(): React.ReactNode {
         return <React.Fragment>
-            <VSCXDetailHeader extension={this.options.extension} service={this.service} />
-            <div className='extensionDocContainer flexcontainer'>
-                <div className='extensionDocumentation'>
-                    <span dangerouslySetInnerHTML={{ __html: this.options.readMe }} />
+                <VSCXDetailHeader
+                    toDispose={this.toDispose}
+                    id={this.id}
+                    progressLocationService={this.progressLocationService}
+                    progressService={this.progressService}
+                    extension={this.extension}
+                    service={this.service} />
+                <div className='extensionDocContainer flexcontainer'>
+                    <div className='extensionDocumentation'>
+                        <span dangerouslySetInnerHTML={{ __html: this.readMe }} />
+                    </div>
                 </div>
-            </div>
         </React.Fragment>;
     }
 

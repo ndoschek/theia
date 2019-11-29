@@ -62,17 +62,19 @@
 }
 
 .extensionButton.working {
-    background: none;
-}
-
-.extensionButton.working:hover {
-    background: none;
-    cursor: default;
+    background-color: var(--theia-disabled-color1);
+    color: var(--theia-ui-font-color0);
+    width: auto;
 }
 
 .extensionButton:hover {
     cursor: pointer;
     background-color: var(--theia-success-color0);
+}
+
+.extensionButton.working:hover {
+    background-color: var(--theia-disabled-color1);
+    cursor: default;
 }
 
 .extensionButton.installed {

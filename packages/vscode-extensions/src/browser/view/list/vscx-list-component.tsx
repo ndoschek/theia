@@ -19,6 +19,7 @@ import { VSCodeExtensionPart } from '../../vscode-extensions-types';
 import { VSCXListItem } from './vscx-list-item-component';
 import { VSCodeExtensionsService } from '../../vscode-extensions-service';
 import { VSCodeExtensionsModel } from '../../vscode-extensions-model';
+import { ProgressService } from '@theia/core/lib/common';
 
 export class VSCXList extends React.Component<VSCXList.Props> {
 
@@ -27,7 +28,14 @@ export class VSCXList extends React.Component<VSCXList.Props> {
             {
                 this.props.extensions && this.props.extensions.length > 0 ?
                     this.props.extensions.map(extension =>
-                        <VSCXListItem key={extension.publisher + extension.name} model={this.props.model} service={this.props.service} extension={extension} />)
+                        <VSCXListItem
+                            progressLocation={this.props.progressLocation}
+                            progressService={this.props.progressService}
+                            key={extension.publisher + extension.name}
+                            model={this.props.model}
+                            service={this.props.service}
+                            extension={extension}
+                        />)
                     :
                     <div className='extensionHeaderContainer noExtensionFound'>
                         No Extensions Found
@@ -42,5 +50,7 @@ export namespace VSCXList {
         extensions?: VSCodeExtensionPart[];
         service: VSCodeExtensionsService;
         model: VSCodeExtensionsModel;
+        progressService: ProgressService,
+        progressLocation: string
     }
 }

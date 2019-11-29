@@ -21,13 +21,13 @@ import { VSCodeExtensionDetailWidget } from './vscode-extensions-detail-widget';
 import { VSCodeExtensionDetailWidgetOptions } from './vscode-extension-detail-widget-factory';
 
 export namespace VSCodeExtensionUri {
-    export const scheme = 'vscx';
+    export const scheme = 'vscode';
     export function toUri(extensionName: string): URI {
-        return new URI('').withScheme(scheme).withFragment(extensionName);
+        return new URI('').withScheme(scheme).withPath('extension/' + extensionName);
     }
     export function toExtensionName(uri: URI): string {
-        if (uri.scheme === scheme) {
-            return uri.fragment;
+        if (uri.scheme === scheme && uri.path.dir.toString() === 'extension') {
+            return uri.path.base;
         }
         throw new Error('The given uri is not an vscode extension URI, uri: ' + uri);
     }
@@ -50,7 +50,9 @@ export class VSCodeExtensionOpenHandler extends WidgetOpenHandler<VSCodeExtensio
     }
 
     protected createWidgetOptions(uri: URI, options: VSCodeExtensionDetailOpenerOptions): VSCodeExtensionDetailWidgetOptions {
-        return options;
+        return {
+            url: options.url
+        };
     }
 
 }

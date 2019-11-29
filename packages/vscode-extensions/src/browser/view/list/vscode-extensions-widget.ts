@@ -20,6 +20,7 @@ import { VSCodeExtensionsSearchbarWidget } from './vscode-extensions-searchbar-w
 import { VSCodeExtensionsListWidget } from './vscode-extensions-list-widget';
 import { VSCodeExtensionsService } from '../../vscode-extensions-service';
 import { VSCodeExtensionsCommands } from '../../vscode-extensions-contribution';
+import { ProgressBar } from '@theia/core/lib/browser/progress-bar';
 
 export const VSCXInstalledList = Symbol('VSCXInstalledList');
 export const VSCXRegistryList = Symbol('VSCXList');
@@ -29,6 +30,8 @@ export class VSCodeExtensionsWidget extends ViewContainer {
 
     static ID = 'vscode-extensions';
     static LABEL = 'Extensions';
+
+    protected progressLocation: string;
 
     @inject(VSCodeExtensionsSearchbarWidget) protected readonly vscxSearchbar: VSCodeExtensionsSearchbarWidget;
     @inject(VSCodeExtensionsService) protected readonly service: VSCodeExtensionsService;
@@ -77,6 +80,10 @@ export class VSCodeExtensionsWidget extends ViewContainer {
             priority: 1,
             onDidChange
         });
+
+        this.progressLocation = 'vscode-extensions-list';
+        const onProgress = this.progressLocationService.onProgress(this.progressLocation);
+        this.toDispose.push(new ProgressBar({ container: this.node, insertMode: 'prepend' }, onProgress));
     }
 
     getSearchTerm(): string {
