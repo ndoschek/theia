@@ -241,9 +241,7 @@ export class KeybindingRegistry {
     protected doRegisterKeybinding(binding: Keybinding, scope: KeybindingScope = KeybindingScope.DEFAULT): Disposable {
         try {
             this.resolveKeybinding(binding);
-            if (this.containsKeybinding(this.keymaps[scope], binding)) {
-                throw new Error(`"${binding.keybinding}" is in collision with something else [scope:${scope}]`);
-            }
+            this.containsKeybinding(this.keymaps[scope], binding);
             this.keymaps[scope].push(binding);
             return Disposable.create(() => {
                 const index = this.keymaps[scope].indexOf(binding);
@@ -294,19 +292,19 @@ export class KeybindingRegistry {
             .filter(b => b.context === binding.context && !b.when && !binding.when);
 
         if (collisions.full.length > 0) {
-            this.logger.warn('Collided keybinding is ignored; ',
+            this.logger.warn('Collided keybinding detected; ',
                 Keybinding.stringify(binding), ' collided with ',
                 collisions.full.map(b => Keybinding.stringify(b)).join(', '));
             return true;
         }
         if (collisions.partial.length > 0) {
-            this.logger.warn('Shadowing keybinding is ignored; ',
+            this.logger.warn('Shadowing keybinding detected; ',
                 Keybinding.stringify(binding), ' shadows ',
                 collisions.partial.map(b => Keybinding.stringify(b)).join(', '));
             return true;
         }
         if (collisions.shadow.length > 0) {
-            this.logger.warn('Shadowed keybinding is ignored; ',
+            this.logger.warn('Shadowed keybinding detected; ',
                 Keybinding.stringify(binding), ' would be shadowed by ',
                 collisions.shadow.map(b => Keybinding.stringify(b)).join(', '));
             return true;
@@ -562,7 +560,8 @@ export class KeybindingRegistry {
             return false;
         }
 
-        for (const binding of bindings) {
+        for (let i = bindings.length - 1; i >= 0; i--) {
+            const binding = bindings[i];
             if (this.isEnabled(binding, event)) {
                 if (this.isPseudoCommand(binding.command)) {
                     /* Don't do anything, let the event propagate.  */
@@ -622,7 +621,7 @@ export class KeybindingRegistry {
         this.keySequence.push(keyCode);
         const bindings = this.getKeybindingsForKeySequence(this.keySequence);
 
-        if (this.tryKeybindingExecution(bindings.full, event)) {
+        if (bindings.partial.length === 0 && this.tryKeybindingExecution(bindings.full, event)) {
 
             this.keySequence = [];
             this.statusBar.removeElement('keybinding-status');

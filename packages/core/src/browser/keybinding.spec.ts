@@ -253,7 +253,7 @@ describe('keybindings', () => {
         expect(bindings.partial.length > 0);
     });
 
-    it('should not register a shadowing keybinding', () => {
+    it('should register a shadowing keybinding', () => {
         const validKeyBinding = 'ctrlcmd+b a';
         const command = TEST_COMMAND_SHADOW.id;
         const keybindingShadowing: Keybinding[] = [
@@ -270,22 +270,22 @@ describe('keybindings', () => {
         keybindingRegistry.registerKeybindings(...keybindingShadowing);
 
         const bindings = keybindingRegistry.getKeybindingsForCommand(command);
-        expect(bindings.length).to.be.equal(1);
+        expect(bindings.length).to.be.equal(2);
         expect(bindings[0].keybinding).to.be.equal(validKeyBinding);
     });
 
-    it('shadowed bindings should not be returned', () => {
+    it('shadowed bindings should also be returned', () => {
         const keyCode = KeyCode.createKeyCode({ first: Key.KEY_A, modifiers: [KeyModifier.Shift] });
         let bindings: Keybinding[];
-
-        const ignoredDefaultBinding: Keybinding = {
-            keybinding: keyCode.toString(),
-            command: 'test.ignored-command'
-        };
 
         const defaultBinding: Keybinding = {
             keybinding: keyCode.toString(),
             command: 'test.workspace-command'
+        };
+
+        const secondDefaultBinding: Keybinding = {
+            keybinding: keyCode.toString(),
+            command: 'test.second-command'
         };
 
         const userBinding: Keybinding = {
@@ -298,7 +298,7 @@ describe('keybindings', () => {
             command: 'test.workspace-command'
         };
 
-        keybindingRegistry.setKeymap(KeybindingScope.DEFAULT, [defaultBinding, ignoredDefaultBinding]);
+        keybindingRegistry.setKeymap(KeybindingScope.DEFAULT, [defaultBinding, secondDefaultBinding]);
         keybindingRegistry.setKeymap(KeybindingScope.USER, [userBinding]);
         keybindingRegistry.setKeymap(KeybindingScope.WORKSPACE, [workspaceBinding]);
         // now WORKSPACE bindings are overriding the other scopes
@@ -318,8 +318,9 @@ describe('keybindings', () => {
         // and finally it should fallback to DEFAULT bindings.
 
         bindings = keybindingRegistry.getKeybindingsForKeySequence([keyCode]).full;
-        expect(bindings).to.have.lengthOf(1);
+        expect(bindings).to.have.lengthOf(2);
         expect(bindings[0].command).to.be.equal(defaultBinding.command);
+        expect(bindings[1].command).to.be.equal(secondDefaultBinding.command);
 
         keybindingRegistry.resetKeybindingsForScope(KeybindingScope.DEFAULT);
         // now the registry should be empty
