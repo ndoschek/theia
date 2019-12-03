@@ -52,11 +52,23 @@ export class VsCodePluginScanner extends TheiaPluginScanner implements PluginSca
      * Maps extension dependencies to deployable extension dependencies.
      */
     getDependencies(plugin: PluginPackage): Map<string, string> | undefined {
-        if (!plugin.extensionDependencies || !plugin.extensionDependencies.length) {
+        // Store the list of dependencies.
+        const dependencies = new Map<string, string>();
+        // Store the list of available dependencies (`extensionDependencies` and `extensionPack`).
+        const deps: string[] = [];
+        // Add the list of `extensionDependencies` if available.
+        if (plugin.extensionDependencies && plugin.extensionDependencies.length) {
+            deps.push(...plugin.extensionDependencies);
+        }
+        // Add the list of `extensionPack` if available.
+        if (plugin.extensionPack && plugin.extensionPack.length) {
+            deps.push(...plugin.extensionPack);
+        }
+        // Exit early if no dependencies are present.
+        if (!deps.length) {
             return undefined;
         }
-        const dependencies = new Map<string, string>();
-        for (const dependency of plugin.extensionDependencies) {
+        for (const dependency of deps) {
             const dependencyId = dependency.toLowerCase();
             dependencies.set(dependencyId, this.VSCODE_PREFIX + dependencyId);
         }
