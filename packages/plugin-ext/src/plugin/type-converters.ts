@@ -23,7 +23,6 @@ import {
     ResourceTextEditDto,
     ResourceFileEditDto,
     TaskDto,
-    ProcessTaskDto,
     PickOpenItem,
     Plugin
 } from '../common/plugin-api-rpc';
@@ -631,16 +630,15 @@ export function fromTask(task: theia.Task): TaskDto | undefined {
         return taskDto;
     }
 
-    const processTaskDto = taskDto as ProcessTaskDto;
     if (taskDefinition.type === 'shell' || types.ShellExecution.is(execution)) {
-        return fromShellExecution(execution, processTaskDto);
+        return fromShellExecution(execution, taskDto);
     }
 
     if (taskDefinition.type === 'process' || types.ProcessExecution.is(execution)) {
-        return fromProcessExecution(<theia.ProcessExecution>execution, processTaskDto);
+        return fromProcessExecution(<theia.ProcessExecution>execution, taskDto);
     }
 
-    return processTaskDto;
+    return taskDto;
 }
 
 export function toTask(taskDto: TaskDto): theia.Task {
@@ -690,41 +688,35 @@ export function toTask(taskDto: TaskDto): theia.Task {
     return result;
 }
 
-export function fromProcessExecution(execution: theia.ProcessExecution, processTaskDto: ProcessTaskDto): ProcessTaskDto {
-    processTaskDto.command = execution.process;
-    processTaskDto.args = execution.args;
+export function fromProcessExecution(execution: theia.ProcessExecution, taskDto: TaskDto): TaskDto {
+    taskDto.command = execution.process;
+    taskDto.args = execution.args;
 
     const options = execution.options;
     if (options) {
-        processTaskDto.options = options;
+        taskDto.options = options;
     }
-    return processTaskDto;
+    return taskDto;
 }
 
-export function fromShellExecution(execution: theia.ShellExecution, processTaskDto: ProcessTaskDto): ProcessTaskDto {
+export function fromShellExecution(execution: theia.ShellExecution, taskDto: TaskDto): TaskDto {
     const options = execution.options;
     if (options) {
-        processTaskDto.options = getShellExecutionOptions(options);
+        taskDto.options = getShellExecutionOptions(options);
     }
 
     const commandLine = execution.commandLine;
     if (commandLine) {
-        const args = commandLine.split(' ');
-        const taskCommand = args.shift();
-
-        if (taskCommand) {
-            processTaskDto.command = taskCommand;
-        }
-
-        processTaskDto.args = args;
-        return processTaskDto;
+        taskDto.command = commandLine;
+        taskDto.args = [];
+        return taskDto;
     }
 
     const command = execution.command;
     if (typeof command === 'string') {
-        processTaskDto.command = command;
-        processTaskDto.args = getShellArgs(execution.args);
-        return processTaskDto;
+        taskDto.command = command;
+        taskDto.args = getShellArgs(execution.args);
+        return taskDto;
     } else {
         throw new Error('Converting ShellQuotedString command is not implemented');
     }
