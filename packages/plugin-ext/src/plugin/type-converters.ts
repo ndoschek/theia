@@ -707,7 +707,7 @@ export function fromShellExecution(execution: theia.ShellExecution, taskDto: Tas
 
     const commandLine = execution.commandLine;
     if (commandLine) {
-        taskDto.command = commandLine;
+        taskDto.commandLine = commandLine;
         taskDto.args = [];
         return taskDto;
     }
@@ -730,10 +730,16 @@ export function getProcessExecution(taskDto: TaskDto): theia.ProcessExecution {
 }
 
 export function getShellExecution(taskDto: TaskDto): theia.ShellExecution {
-    return new types.ShellExecution(
-        taskDto.command || taskDto.commandLine || '',
-        taskDto.args,
-        taskDto.options || {});
+    if (taskDto.commandLine) {
+        return new types.ShellExecution(
+            taskDto.commandLine,
+            taskDto.options || {});
+    } else {
+        return new types.ShellExecution(
+            taskDto.command,
+            taskDto.args || [],
+            taskDto.options || {});
+    }
 }
 
 export function getShellArgs(args: undefined | (string | theia.ShellQuotedString)[]): string[] {
