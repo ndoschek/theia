@@ -27,6 +27,7 @@ import { VSXRegistryOpenHandler } from './view/detail/vsx-registry-open-handler'
 import { VSXRegistryDetailWidgetFactory } from './view/detail/vsx-registry-detail-widget-factory';
 
 import '../../src/browser/style/index.css';
+import { bindVSXRegistryPreferences } from './vsx-registry-preferences';
 
 export default new ContainerModule(bind => {
     bindViewContribution(bind, VSXRegistryContribution);
@@ -67,4 +68,6 @@ export default new ContainerModule(bind => {
 
     bind(VSXRegistryOpenHandler).toSelf().inSingletonScope();
     bind(OpenHandler).toService(VSXRegistryOpenHandler);
+
+    bindVSXRegistryPreferences(bind);
 });

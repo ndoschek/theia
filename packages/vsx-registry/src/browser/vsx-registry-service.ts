@@ -25,16 +25,14 @@ import { OpenerService, open } from '@theia/core/lib/browser';
 import { VSXRegistryUri, VSXRegistryDetailOpenerOptions } from './view/detail/vsx-registry-open-handler';
 import { PluginServer } from '@theia/plugin-ext';
 import { HostedPluginSupport } from '@theia/plugin-ext/lib/hosted/browser/hosted-plugin';
+import { VSXRegistryPreferences } from './vsx-registry-preferences';
 
 export type ExtensionKeywords = string[];
 export const ExtensionKeywords = Symbol('ExtensionKeyword');
 
-// for now to test the extension one has to start the Registry Server via https://gitpod.io/#https://github.com/theia-ide/extension-registry
-// and copy then the workspace url plus '/api' to here
-export const API_URL = 'https://8080-cf7d7977-531a-412f-94ca-628682426783.ws-eu01.gitpod.io/api';
-
 @injectable()
 export class VSXRegistryService {
+    protected apiUrl: string;
     protected readonly toDispose = new DisposableCollection();
 
     protected readonly onDidUpdateSearchEmitter = new Emitter<void>();
@@ -48,17 +46,25 @@ export class VSXRegistryService {
     @inject(OpenerService) protected readonly openerService: OpenerService;
     @inject(HostedPluginSupport) protected readonly pluginSupport: HostedPluginSupport;
     @inject(PluginServer) protected readonly pluginServer: PluginServer;
+    @inject(VSXRegistryPreferences) protected readonly vsxRegistryPreferences: VSXRegistryPreferences;
 
     @postConstruct()
     protected async init(): Promise<void> {
-        this.updateSearch();
+        this.vsxRegistryPreferences.onPreferenceChanged(e => {
+            this.apiUrl = this.vsxRegistryPreferences['vsx-registry.api-url'];
+            this.updateSearch();
+        });
         this.toDispose.push(this.pluginSupport.onDidChangePlugins(() => this.updateInstalled()));
     }
 
     protected createEndpoint(arr: string[], queries?: { key: string, value: string | number }[]): string {
         const url = '/' + arr.reduce((acc, curr) => acc + (curr ? '/' + curr : ''));
         const queryString = queries ? '?' + queries.map<string>(obj => obj.key + '=' + obj.value).join('&') : '';
-        return API_URL + url + queryString;
+        if (this.apiUrl) {
+            return this.apiUrl + url + queryString;
+        } else {
+            throw Error('No URL for Open VSX Registry given. Enter an URL in preferences.');
+        }
     }
 
     dispose(): void {
