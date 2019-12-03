@@ -16,20 +16,20 @@
 
 import * as React from 'react';
 import { ReactWidget } from '@theia/core/lib/browser';
-import { VSCXDetailHeader } from './vscx-detail-header-component';
-import { VSCodeExtensionsService } from '../../vscode-extensions-service';
-import { VSCodeExtensionsModel } from '../../vscode-extensions-model';
+import { VSXRegistryDetailHeader } from './vsx-registry-detail-header-component';
+import { VSXRegistryService } from '../../vsx-registry-service';
+import { VSXRegistryModel } from '../../vsx-registry-model';
 import { ProgressService } from '@theia/core/lib/common';
 import { ProgressLocationService } from '@theia/core/lib/browser/progress-location-service';
-import { VSCodeExtensionFullResolved } from '../../vscode-extensions-types';
+import { VSCodeExtensionFullResolved } from '../../vsx-registry-types';
 
-export class VSCodeExtensionDetailWidget extends ReactWidget {
+export class VSXRegistryDetailWidget extends ReactWidget {
 
     constructor(
         protected readonly extension: VSCodeExtensionFullResolved,
         protected readonly readMe: string,
-        protected readonly service: VSCodeExtensionsService,
-        protected readonly model: VSCodeExtensionsModel,
+        protected readonly service: VSXRegistryService,
+        protected readonly model: VSXRegistryModel,
         protected readonly progressService: ProgressService,
         protected readonly progressLocationService: ProgressLocationService
     ) {
@@ -46,18 +46,18 @@ export class VSCodeExtensionDetailWidget extends ReactWidget {
 
     protected render(): React.ReactNode {
         return <React.Fragment>
-                <VSCXDetailHeader
-                    toDispose={this.toDispose}
-                    id={this.id}
-                    progressLocationService={this.progressLocationService}
-                    progressService={this.progressService}
-                    extension={this.extension}
-                    service={this.service} />
-                <div className='extensionDocContainer flexcontainer'>
-                    <div className='extensionDocumentation'>
-                        <span dangerouslySetInnerHTML={{ __html: this.readMe }} />
-                    </div>
+            <VSXRegistryDetailHeader
+                toDispose={this.toDispose}
+                id={this.id}
+                progressLocationService={this.progressLocationService}
+                progressService={this.progressService}
+                extension={this.extension}
+                service={this.service} />
+            <div className='extension-doc-container flexcontainer'>
+                <div className='extension-documentation'>
+                    <span dangerouslySetInnerHTML={{ __html: this.readMe }} />
                 </div>
+            </div>
         </React.Fragment>;
     }
 

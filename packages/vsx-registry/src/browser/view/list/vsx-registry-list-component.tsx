@@ -15,20 +15,20 @@
  ********************************************************************************/
 
 import * as React from 'react';
-import { VSCodeExtensionPart } from '../../vscode-extensions-types';
-import { VSCXListItem } from './vscx-list-item-component';
-import { VSCodeExtensionsService } from '../../vscode-extensions-service';
-import { VSCodeExtensionsModel } from '../../vscode-extensions-model';
+import { VSCodeExtensionPart } from '../../vsx-registry-types';
+import { VSXRegistryListItem } from './vsx-registry-list-item-component';
+import { VSXRegistryService } from '../../vsx-registry-service';
+import { VSXRegistryModel } from '../../vsx-registry-model';
 import { ProgressService } from '@theia/core/lib/common';
 
-export class VSCXList extends React.Component<VSCXList.Props> {
+export class VSXRegistryList extends React.Component<VSXRegistryList.Props> {
 
     render(): JSX.Element {
         return <React.Fragment>
             {
                 this.props.extensions && this.props.extensions.length > 0 ?
                     this.props.extensions.map(extension =>
-                        <VSCXListItem
+                        <VSXRegistryListItem
                             progressLocation={this.props.progressLocation}
                             progressService={this.props.progressService}
                             key={extension.publisher + extension.name}
@@ -37,7 +37,7 @@ export class VSCXList extends React.Component<VSCXList.Props> {
                             extension={extension}
                         />)
                     :
-                    <div className='extensionHeaderContainer noExtensionFound'>
+                    <div className='extension-header-container no-extension-found'>
                         No Extensions Found
                     </div>
             }
@@ -45,11 +45,11 @@ export class VSCXList extends React.Component<VSCXList.Props> {
     }
 }
 
-export namespace VSCXList {
+export namespace VSXRegistryList {
     export interface Props {
         extensions?: VSCodeExtensionPart[];
-        service: VSCodeExtensionsService;
-        model: VSCodeExtensionsModel;
+        service: VSXRegistryService;
+        model: VSXRegistryModel;
         progressService: ProgressService,
         progressLocation: string
     }

@@ -14,94 +14,94 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-.vscode-extension-detail {
+.theia-vsx-registry.vscode-extension-detail {
     display: flex;
     flex-direction: column;
 }
 
-.vscode-extension-detail .extensionHeaderContainer {
+.theia-vsx-registry.vscode-extension-detail .extension-header-container {
     background: var(--theia-layout-color0);
     padding: 15px 22px;
     border-bottom: 3px solid var(--theia-border-color1);
 }
 
-.vscode-extension-detail .extensionTitleContainer {
+.theia-vsx-registry.vscode-extension-detail .extension-title-container {
     margin-bottom: 10px;
 }
 
-.vscode-extension-detail .extensionButtonRow {
+.theia-vsx-registry.vscode-extension-detail .extension-button-row {
     display: flex;
 }
 
-.vscode-extension-detail .extensionSubtitle {
+.theia-vsx-registry.vscode-extension-detail .extension-subtitle {
     font-size: var(--theia-ui-font-size2);
     display: flex;
 }
 
-.vscode-extension-detail .extensionName {
+.theia-vsx-registry.vscode-extension-detail .extension-name {
     margin-bottom: 10px;
     margin-top: 0px;
 }
 
-.vscode-extension-detail .textDivider {
+.theia-vsx-registry.vscode-extension-detail .text-divider {
     border-right: var(--theia-ui-font-color1) 1px solid;
     padding-right: 10px;
     box-sizing: border-box;
     margin-right: 10px;
 }
 
-.vscode-extension-detail .extensionRatingStars span{
+.theia-vsx-registry.vscode-extension-detail .extension-rating-stars span{
     margin: 0 2px;
 }
 
-.vscode-extension-detail .extensionDescription {
+.theia-vsx-registry.vscode-extension-detail .extension-description {
     font-size: var(--theia-ui-font-size1);
     margin-bottom: 10px;
 }
 
-.vscode-extension-detail .extensionButtonContainer .extensionButton {
+.theia-vsx-registry.vscode-extension-detail .extension-button-container .extension-button {
     margin-right: 10px;
 }
 
-.vscode-extension-detail .extensionDocContainer {
+.theia-vsx-registry.vscode-extension-detail .extension-doc-container {
     padding: 15px 22px;
     overflow-y: auto;
 }
 
-.vscode-extension-detail .extensionDocumentation {
+.theia-vsx-registry.vscode-extension-detail .extension-documentation {
     color: var(--theia-ui-font-color1);
     height: 100%;
     width: 100%;
 }
 
-.vscode-extension-detail img {
+.theia-vsx-registry.vscode-extension-detail img {
     max-width: 100%;
 }
 
-.vscode-extension-detail a {
+.theia-vsx-registry.vscode-extension-detail a {
     font-weight: bold;
     text-decoration: none;
     color: var(--theia-accent-color0);
 }
 
-.vscode-extension-detail code {
+.theia-vsx-registry.vscode-extension-detail code {
     font-size: var(--theia-code-font-size);
     line-height: var(--theia-code-line-height);
     padding: var(--theia-code-padding);
     font-family: var(--theia-code-font-family);
 }
 
-.vscode-extension-detail pre code {
+.theia-vsx-registry.vscode-extension-detail pre code {
     background: var(--theia-layout-color2);
     display: block;
     padding: 10px;
 }
 
-.vscode-extension-detail .extensionHeaderImage .icon {
+.theia-vsx-registry.vscode-extension-detail .extension-header-image .icon {
     width: 70px;
 }
 
-.vscode-extension-detail .extensionHeaderImage {
+.theia-vsx-registry.vscode-extension-detail .extension-header-image {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -109,7 +109,7 @@
     margin-right: 20px;
 }
 
-.vscode-extension-detail .extensionHeaderContainer {
+.theia-vsx-registry.vscode-extension-detail .extension-header-container {
     display: flex;
 }
 

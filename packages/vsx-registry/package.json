@@ -1,5 +1,5 @@
 {
-  "name": "@theia/vscode-extensions",
+  "name": "@theia/vsx-registry",
   "version": "0.12.0",
   "description": "Theia - VSX Registry",
   "dependencies": {
@@ -18,7 +18,7 @@
   ],
   "theiaExtensions": [
     {
-      "frontend": "lib/browser/vscode-extensions-frontend-module"
+      "frontend": "lib/browser/vsx-registry-frontend-module"
     }
   ],
   "license": "EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0",

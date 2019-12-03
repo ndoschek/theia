@@ -18,15 +18,15 @@ import * as React from 'react';
 import { ReactWidget } from '@theia/core/lib/browser/widgets';
 import { injectable, postConstruct, inject } from 'inversify';
 import { DisposableCollection, Disposable } from '@theia/core/lib/common';
-import { VSCodeExtensionsService } from '../../vscode-extensions-service';
+import { VSXRegistryService } from '../../vsx-registry-service';
 
 @injectable()
-export class VSCodeExtensionsSearchbarWidget extends ReactWidget {
+export class VSXRegistrySearchbarWidget extends ReactWidget {
 
-    @inject(VSCodeExtensionsService) protected readonly service: VSCodeExtensionsService;
+    @inject(VSXRegistryService) protected readonly service: VSXRegistryService;
 
     protected readonly toDisposeOnSearch = new DisposableCollection();
-    protected searchComponent: VSCodeExtensionSearchComponent | null;
+    protected searchComponent: VSXRegistrySearchComponent | null;
 
     @postConstruct()
     protected init(): void {
@@ -56,13 +56,13 @@ export class VSCodeExtensionsSearchbarWidget extends ReactWidget {
     }
 
     protected render(): React.ReactNode {
-        return <VSCodeExtensionSearchComponent ref={ref => this.searchComponent = ref} onChange={this.onChange} />;
+        return <VSXRegistrySearchComponent ref={ref => this.searchComponent = ref} onChange={this.onChange} />;
     }
 }
 
-export class VSCodeExtensionSearchComponent extends React.Component<VSCodeExtensionSearchComponent.Props, VSCodeExtensionSearchComponent.State> {
+export class VSXRegistrySearchComponent extends React.Component<VSXRegistrySearchComponent.Props, VSXRegistrySearchComponent.State> {
 
-    constructor(props: VSCodeExtensionSearchComponent.Props) {
+    constructor(props: VSXRegistrySearchComponent.Props) {
         super(props);
 
         this.state = {
@@ -88,8 +88,8 @@ export class VSCodeExtensionSearchComponent extends React.Component<VSCodeExtens
 
     render(): JSX.Element {
         return <React.Fragment>
-            <div id='extensionSearchContainer' className='flexcontainer'>
-                <div id='extensionSearchFieldContainer' className='flexcontainer'>
+            <div id='extension-search-container' className='flexcontainer'>
+                <div id='extension-search-field-container' className='flexcontainer'>
                     <input
                         id='extensionSearchField'
                         type='text'
@@ -103,7 +103,7 @@ export class VSCodeExtensionSearchComponent extends React.Component<VSCodeExtens
     }
 }
 
-export namespace VSCodeExtensionSearchComponent {
+export namespace VSXRegistrySearchComponent {
     export interface Props {
         onChange: (query: string) => void
     }

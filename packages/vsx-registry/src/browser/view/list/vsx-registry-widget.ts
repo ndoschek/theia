@@ -16,41 +16,42 @@
 
 import { injectable, inject, postConstruct } from 'inversify';
 import { ViewContainer, PanelLayout, SplitPanel, ViewContainerLayout, ViewContainerPart } from '@theia/core/lib/browser';
-import { VSCodeExtensionsSearchbarWidget } from './vscode-extensions-searchbar-widget';
-import { VSCodeExtensionsListWidget } from './vscode-extensions-list-widget';
-import { VSCodeExtensionsService } from '../../vscode-extensions-service';
-import { VSCodeExtensionsCommands } from '../../vscode-extensions-contribution';
+import { VSXRegistrySearchbarWidget } from './vsx-registry-searchbar-widget';
+import { VSXRegistryListWidget } from './vsx-registry-list-widget';
+import { VSXRegistryService } from '../../vsx-registry-service';
+import { VSCodeExtensionsCommands } from '../../vsx-registry-contribution';
 import { ProgressBar } from '@theia/core/lib/browser/progress-bar';
 
-export const VSCXInstalledList = Symbol('VSCXInstalledList');
-export const VSCXRegistryList = Symbol('VSCXList');
+export const VSXRegistryInstalledList = Symbol('VSXRegistryInstalledList');
+export const VSXRegistryList = Symbol('VSXRegistryList');
 
 @injectable()
-export class VSCodeExtensionsWidget extends ViewContainer {
+export class VSXRegistryWidget extends ViewContainer {
 
-    static ID = 'vscode-extensions';
+    static ID = 'theia-vsx-registry';
     static LABEL = 'Extensions';
 
     protected progressLocation: string;
 
-    @inject(VSCodeExtensionsSearchbarWidget) protected readonly vscxSearchbar: VSCodeExtensionsSearchbarWidget;
-    @inject(VSCodeExtensionsService) protected readonly service: VSCodeExtensionsService;
-    @inject(VSCXInstalledList) protected readonly vscxInstalledList: VSCodeExtensionsListWidget;
-    @inject(VSCXRegistryList) protected readonly vscxRegistryList: VSCodeExtensionsListWidget;
+    @inject(VSXRegistrySearchbarWidget) protected readonly vscxSearchbar: VSXRegistrySearchbarWidget;
+    @inject(VSXRegistryService) protected readonly service: VSXRegistryService;
+    @inject(VSXRegistryInstalledList) protected readonly vscxInstalledList: VSXRegistryListWidget;
+    @inject(VSXRegistryList) protected readonly vscxRegistryList: VSXRegistryListWidget;
 
     @postConstruct()
     protected init(): void {
         super.init();
 
-        this.id = 'vscode-extensions';
+        this.id = 'theia-vsx-registry';
         this.title.label = 'Extensions';
         this.title.caption = 'Extensions';
-        this.title.iconClass = 'vscode-extensions-tab-icon';
+        this.title.iconClass = 'theia-vsx-registry-tab-icon';
         this.title.closable = true;
 
-        this.addClass('vscode-extensions');
+        this.addClass('theia-vsx-registry');
+        this.addClass('extension-list');
 
-        this.setTitleOptions({ label: VSCodeExtensionsWidget.LABEL });
+        this.setTitleOptions({ label: VSXRegistryWidget.LABEL });
 
         this.addWidget(this.vscxInstalledList, { canHide: true });
         const installedListPart = this.getPartFor(this.vscxInstalledList);
@@ -81,7 +82,7 @@ export class VSCodeExtensionsWidget extends ViewContainer {
             onDidChange
         });
 
-        this.progressLocation = 'vscode-extensions-list';
+        this.progressLocation = 'vsx-registry-list';
         const onProgress = this.progressLocationService.onProgress(this.progressLocation);
         this.toDispose.push(new ProgressBar({ container: this.node, insertMode: 'prepend' }, onProgress));
     }

@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 import { injectable } from 'inversify';
-import { VSCodeExtensionPart, VSCodeExtensionFull, VSCodeExtensionReviewList } from './vscode-extensions-types';
+import { VSCodeExtensionPart, VSCodeExtensionFull, VSCodeExtensionReviewList } from './vsx-registry-types';
 
 export interface ExtensionRegistryAPIRequest<T> {
     endpoint: string,
@@ -24,7 +24,7 @@ export interface ExtensionRegistryAPIRequest<T> {
 }
 
 @injectable()
-export class VSCodeExtensionsAPI {
+export class VSXRegistryAPI {
     async run<T>(req: ExtensionRegistryAPIRequest<T>): Promise<T> {
         const headers: HeadersInit = { 'Content-Type': 'application/json' };
         const param: RequestInit = {

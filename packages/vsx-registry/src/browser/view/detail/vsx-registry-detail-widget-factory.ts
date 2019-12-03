@@ -16,36 +16,38 @@
 
 import { injectable, inject } from 'inversify';
 import { WidgetFactory } from '@theia/core/lib/browser/widget-manager';
-import { VSCodeExtensionUri } from './vscode-extension-open-handler';
-import { VSCodeExtensionDetailWidget } from './vscode-extensions-detail-widget';
-import { VSCodeExtensionPartResolved, VSCodeExtensionFullResolved } from '../../vscode-extensions-types';
-import { VSCodeExtensionsService } from '../../vscode-extensions-service';
-import { VSCodeExtensionsModel } from '../../vscode-extensions-model';
+import { VSXRegistryUri } from './vsx-registry-open-handler';
+import { VSXRegistryDetailWidget } from './vsx-registry-detail-widget';
+import { VSCodeExtensionPartResolved, VSCodeExtensionFullResolved } from '../../vsx-registry-types';
+import { VSXRegistryService } from '../../vsx-registry-service';
+import { VSXRegistryModel } from '../../vsx-registry-model';
 import { ProgressLocationService } from '@theia/core/lib/browser/progress-location-service';
 import { ProgressService } from '@theia/core/lib/common';
 
-export interface VSCodeExtensionDetailWidgetOptions {
+export interface VSXRegistryDetailWidgetOptions {
     readonly url: string
 }
 
 @injectable()
-export class VSCodeExtensionDetailWidgetFactory implements WidgetFactory {
+export class VSXRegistryDetailWidgetFactory implements WidgetFactory {
 
-    readonly id = VSCodeExtensionUri.scheme;
+    readonly id = VSXRegistryUri.scheme;
 
-    @inject(VSCodeExtensionsService) protected readonly service: VSCodeExtensionsService;
-    @inject(VSCodeExtensionsModel) protected readonly model: VSCodeExtensionsModel;
+    @inject(VSXRegistryService) protected readonly service: VSXRegistryService;
+    @inject(VSXRegistryModel) protected readonly model: VSXRegistryModel;
     @inject(ProgressLocationService) protected readonly progressLocationService: ProgressLocationService;
     @inject(ProgressService) protected readonly progressService: ProgressService;
 
-    async createWidget(options: VSCodeExtensionDetailWidgetOptions): Promise<VSCodeExtensionDetailWidget> {
+    async createWidget(options: VSXRegistryDetailWidgetOptions): Promise<VSXRegistryDetailWidget> {
         const extension = await this.service.getExtensionDetail(options.url);
         const extensionResolved = new VSCodeExtensionPartResolved(extension, this.model) as VSCodeExtensionFullResolved;
         const readMe = await this.service.compileDocumentation(extension);
 
-        const widget = new VSCodeExtensionDetailWidget(
+        const widget = new VSXRegistryDetailWidget(
             extensionResolved, readMe, this.service, this.model, this.progressService, this.progressLocationService);
         widget.id = 'vscode-extension:' + extension.name;
+        widget.addClass('theia-vsx-registry');
+        widget.addClass('extension-detail');
         widget.title.closable = true;
         widget.title.label = extension.name;
         widget.title.iconClass = 'fa fa-puzzle-piece';

@@ -16,14 +16,14 @@
 
 import * as React from 'react';
 
-interface ExportRatingStarsProps {
+interface VSCodeExtensionStarsProps {
     number: number
 }
 
-export class VSCXStars extends React.Component<ExportRatingStarsProps> {
+export class VSCodeExtensionStars extends React.Component<VSCodeExtensionStarsProps> {
     render(): JSX.Element {
         return <React.Fragment>
-            <div className='extensionRatingStars'>
+            <div className='extension-rating-stars'>
                 {this.getStar(1)}{this.getStar(2)}{this.getStar(3)}{this.getStar(4)}{this.getStar(5)}
             </div>
         </React.Fragment>;

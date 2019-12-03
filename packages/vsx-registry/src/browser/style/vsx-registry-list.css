@@ -14,28 +14,24 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-.vscode-extensions {
+.theia-vsx-registry.extension-list {
     min-width: 250px !important;
     background-color: var(--theia-layout-color1);
     display: flex;
     flex-direction: column;
 }
 
-#extensionSearchContainer {
-    padding: 15px 8px 15px 15px;
+.theia-vsx-registry.extension-list #extension-search-container {
+    padding: 15px 8px 15px 20px;
     box-sizing: border-box;
     flex-shrink: 0;
 }
 
-.theia-side-panel #extensionSearchContainer {
-    padding-left: 20px;
-}
-
-#extensionSearchFieldContainer {
+.theia-vsx-registry.extension-list #extension-search-field-container {
     flex: 1;
 }
 
-#extensionSearchFieldContainer input {
+.theia-vsx-registry.extension-list #extension-search-field-container input {
     flex: 1;
     font-size: var(--theia-ui-font-size1);
     line-height: var(--theia-content-line-height);
@@ -47,91 +43,91 @@
     padding-left: 5px;
 }
 
-.vscode-extensions .extensionInformationContainer {
+.theia-vsx-registry.extension-list .extension-info-container {
     flex: 1;
     overflow: hidden;
 }
 
-.vscode-extensions .extensionIconContainer {
+.theia-vsx-registry.extension-list .extension-icon-container {
     width: 60px;
     height: 60px;
     display: flex;
 }
 
-.vscode-extensions .extensionIconContainer .icon {
+.theia-vsx-registry.extension-list .extension-icon-container .icon {
     display: flex;
     justify-content: flex-start;
     align-items: center;
 }
 
-.vscode-extensions .extensionIconContainer img {
+.theia-vsx-registry.extension-list .extension-icon-container img {
     width: 40px;
 }
 
-#extensionListContainer {
+.theia-vsx-registry.extension-list #extension-list-container {
     width: 100%;
     box-sizing: border-box;
     overflow-y: auto;
     flex-grow: 1;
 }
 
-.vscode-extensions .extensionHeaderContainer {
+.theia-vsx-registry.extension-list .extension-header-container {
     padding: 3px 15px;
     font-size: var(--theia-ui-font-size0);
     background: var(--theia-layout-color1);
 }
 
-.theia-side-panel .vscode-extensions .extensionHeaderContainer {
+.theia-vsx-registry.extension-list .extension-header-container {
     padding-left: 20px;
 }
 
-.vscode-extensions .extensionHeaderContainer:hover {
+.theia-vsx-registry.extension-list .extension-header-container:hover {
     background: var(--theia-layout-color2);
 }
 
-.vscode-extensions .extensionHeaderContainer .row {
+.theia-vsx-registry.extension-list .extension-header-container .row {
     margin: 3px 0;
 }
 
-.vscode-extensions .extensionName {
+.theia-vsx-registry.extension-list .extension-name {
     flex: 5;
     margin-right: 5px;
     font-size: var(--theia-ui-font-size1);
     font-weight: 800;
 }
 
-.vscode-extensions .extensionVersion {
+.theia-vsx-registry.extension-list .extension-version {
     flex: 3;
     align-self: flex-end;
     text-align: right;
     font-size: var(--theia-ui-font-size0)
 }
 
-.vscode-extensions .extensionDescription {
+.theia-vsx-registry.extension-list .extension-description {
     flex: 1;
 }
 
-.vscode-extensions .extensionAuthor {
+.theia-vsx-registry.extension-list .extension-author {
     font-size: var(--theia-ui-font-size0);
     flex: 5;
     align-items: center;
 }
 
-.vscode-extensions .extensionButtonContainer {
+.theia-vsx-registry.extension-list .extension-button-container {
     justify-content: flex-end;
     align-items: center;
     flex: 3;
 }
 
-.vscode-extensions-tab-icon {
-    -webkit-mask: url('extensions.svg');
-    mask: url('extensions.svg');
-}
-
-.vscode-extensions .extensionHeaderContainer.noExtensionFound {
+.theia-vsx-registry.extension-list .extension-header-container.no-extension-found {
     font-size: var(--theia-ui-font-size1);
 }
 
-.vscode-extensions .extensionHeaderContainer.noExtensionFound:hover {
+.theia-vsx-registry.extension-list .extension-header-container.no-extension-found:hover {
     background: inherit;
+}
+
+.theia-vsx-registry-tab-icon {
+    -webkit-mask: url('extensions.svg');
+    mask: url('extensions.svg');
 }

@@ -18,40 +18,40 @@ import * as React from 'react';
 import { ReactWidget } from '@theia/core/lib/browser/widgets';
 import { injectable, interfaces, Container, inject, postConstruct } from 'inversify';
 
-import { VSCodeExtensionsService } from '../../vscode-extensions-service';
-import { VSCodeExtensionsModel } from '../../vscode-extensions-model';
-import { VSCXList } from './vscx-list-component';
-import { VSCodeExtensionPart, VSCodeExtensionsLocation } from '../../vscode-extensions-types';
+import { VSXRegistryService } from '../../vsx-registry-service';
+import { VSXRegistryModel } from '../../vsx-registry-model';
+import { VSXRegistryList } from './vsx-registry-list-component';
+import { VSCodeExtensionPart, VSXRegistryExtensionLocation } from '../../vsx-registry-types';
 import { ProgressLocationService } from '@theia/core/lib/browser/progress-location-service';
 import { ProgressService } from '@theia/core/lib/common';
 
-export const VSCodeExtensionsListOptions = Symbol('VSCodeExtensionsListOptions');
+export const VSXRegistryListOptions = Symbol('VSCodeExtensionsListOptions');
 
-export interface VSCodeExtensionsListOptions {
+export interface VSXRegistryListOptions {
     id: string;
     label: string;
-    location: VSCodeExtensionsLocation;
+    location: VSXRegistryExtensionLocation;
 }
 
 @injectable()
-export class VSCodeExtensionsListWidget extends ReactWidget {
+export class VSXRegistryListWidget extends ReactWidget {
 
-    static createContainer(parent: interfaces.Container, options: VSCodeExtensionsListOptions): Container {
+    static createContainer(parent: interfaces.Container, options: VSXRegistryListOptions): Container {
         const child = new Container({ defaultScope: 'Singleton' });
         child.parent = parent;
-        child.bind(VSCodeExtensionsListOptions).toConstantValue(options);
-        child.bind(VSCodeExtensionsListWidget).toSelf();
+        child.bind(VSXRegistryListOptions).toConstantValue(options);
+        child.bind(VSXRegistryListWidget).toSelf();
         return child;
     }
-    static createWidget(parent: interfaces.Container, options: VSCodeExtensionsListOptions): VSCodeExtensionsListWidget {
-        return VSCodeExtensionsListWidget.createContainer(parent, options).get(VSCodeExtensionsListWidget);
+    static createWidget(parent: interfaces.Container, options: VSXRegistryListOptions): VSXRegistryListWidget {
+        return VSXRegistryListWidget.createContainer(parent, options).get(VSXRegistryListWidget);
     }
 
     protected extensions: VSCodeExtensionPart[];
 
-    @inject(VSCodeExtensionsListOptions) protected readonly options: VSCodeExtensionsListOptions;
-    @inject(VSCodeExtensionsService) protected readonly service: VSCodeExtensionsService;
-    @inject(VSCodeExtensionsModel) protected readonly model: VSCodeExtensionsModel;
+    @inject(VSXRegistryListOptions) protected readonly options: VSXRegistryListOptions;
+    @inject(VSXRegistryService) protected readonly service: VSXRegistryService;
+    @inject(VSXRegistryModel) protected readonly model: VSXRegistryModel;
     @inject(ProgressLocationService) protected readonly progressLocationService: ProgressLocationService;
     @inject(ProgressService) protected readonly progressService: ProgressService;
 
@@ -68,8 +68,8 @@ export class VSCodeExtensionsListWidget extends ReactWidget {
 
     protected render(): React.ReactNode {
         return <React.Fragment>
-            <VSCXList
-                progressLocation='vscode-extensions-list'
+            <VSXRegistryList
+                progressLocation='vsx-registry-list'
                 progressService={this.progressService}
                 extensions={this.extensions}
                 model={this.model}

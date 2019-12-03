@@ -18,11 +18,11 @@ import { injectable, inject, postConstruct } from 'inversify';
 import * as showdown from 'showdown';
 import * as sanitize from 'sanitize-html';
 import { DisposableCollection, Emitter } from '@theia/core';
-import { VSCodeExtensionsAPI } from './vscode-extensions-api';
-import { SearchParam, VSCodeExtensionPart, VSCodeExtensionFull, VSCodeExtensionReviewList } from './vscode-extensions-types';
-import { VSCodeExtensionsModel } from './vscode-extensions-model';
+import { VSXRegistryAPI } from './vsx-registry-api';
+import { VSXRegistrySearchParam, VSCodeExtensionPart, VSCodeExtensionFull, VSCodeExtensionReviewList } from './vsx-registry-types';
+import { VSXRegistryModel } from './vsx-registry-model';
 import { OpenerService, open } from '@theia/core/lib/browser';
-import { VSCodeExtensionUri, VSCodeExtensionDetailOpenerOptions } from './view/detail/vscode-extension-open-handler';
+import { VSXRegistryUri, VSXRegistryDetailOpenerOptions } from './view/detail/vsx-registry-open-handler';
 import { PluginServer } from '@theia/plugin-ext';
 import { HostedPluginSupport } from '@theia/plugin-ext/lib/hosted/browser/hosted-plugin';
 
@@ -34,7 +34,7 @@ export const ExtensionKeywords = Symbol('ExtensionKeyword');
 export const API_URL = 'https://8080-cf7d7977-531a-412f-94ca-628682426783.ws-eu01.gitpod.io/api';
 
 @injectable()
-export class VSCodeExtensionsService {
+export class VSXRegistryService {
     protected readonly toDispose = new DisposableCollection();
 
     protected readonly onDidUpdateSearchEmitter = new Emitter<void>();
@@ -43,8 +43,8 @@ export class VSCodeExtensionsService {
     protected readonly onDidUpdateInstalledEmitter = new Emitter<void>();
     readonly onDidUpdateInstalled = this.onDidUpdateInstalledEmitter.event;
 
-    @inject(VSCodeExtensionsAPI) protected readonly api: VSCodeExtensionsAPI;
-    @inject(VSCodeExtensionsModel) protected readonly model: VSCodeExtensionsModel;
+    @inject(VSXRegistryAPI) protected readonly api: VSXRegistryAPI;
+    @inject(VSXRegistryModel) protected readonly model: VSXRegistryModel;
     @inject(OpenerService) protected readonly openerService: OpenerService;
     @inject(HostedPluginSupport) protected readonly pluginSupport: HostedPluginSupport;
     @inject(PluginServer) protected readonly pluginServer: PluginServer;
@@ -65,7 +65,7 @@ export class VSCodeExtensionsService {
         this.toDispose.dispose();
     }
 
-    async updateSearch(param?: SearchParam): Promise<void> {
+    async updateSearch(param?: VSXRegistrySearchParam): Promise<void> {
         const endpoint = this.createEndpoint(['-', 'search'], param && param.query ? [{ key: 'query', value: param.query }] : undefined);
         const extensions = await this.api.getExtensions(endpoint);
         this.model.registryExtensions = extensions;
@@ -122,11 +122,11 @@ export class VSCodeExtensionsService {
     }
 
     async openExtensionDetail(extensionRaw: VSCodeExtensionPart): Promise<void> {
-        const options: VSCodeExtensionDetailOpenerOptions = {
+        const options: VSXRegistryDetailOpenerOptions = {
             mode: 'reveal',
             url: extensionRaw.url
         };
-        open(this.openerService, VSCodeExtensionUri.toUri(extensionRaw.name), options);
+        open(this.openerService, VSXRegistryUri.toUri(extensionRaw.name), options);
     }
 
     async compileDocumentation(extension: VSCodeExtensionFull): Promise<string> {

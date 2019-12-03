@@ -15,20 +15,20 @@
  ********************************************************************************/
 
 import * as React from 'react';
-import { VSCodeExtensionPartResolved, VSCodeExtensionFullResolved } from '../../vscode-extensions-types';
-import { VSCXStars } from './vscx-stars-component';
-import { VSCXInstallButton } from '../vscx-install-button-component';
-import { VSCodeExtensionsService } from '../../vscode-extensions-service';
+import { VSCodeExtensionPartResolved, VSCodeExtensionFullResolved } from '../../vsx-registry-types';
+import { VSCodeExtensionStars } from './vsx-registry-stars-component';
+import { VSXRegistryInstallButton } from '../vsx-registry-install-button-component';
+import { VSXRegistryService } from '../../vsx-registry-service';
 import { ProgressService, DisposableCollection } from '@theia/core/lib/common';
 import { ProgressLocationService } from '@theia/core/lib/browser/progress-location-service';
 import { ProgressBar } from '@theia/core/lib/browser/progress-bar';
 
-export class VSCXDetailHeader extends React.Component<VSCXDetailHeader.Props, VSCXDetailHeader.State> {
+export class VSXRegistryDetailHeader extends React.Component<VSXRegistryDetailHeader.Props, VSXRegistryDetailHeader.State> {
 
     protected detailHeaderRef: (ref: HTMLElement | null) => void;
     protected progressLocation: string;
 
-    constructor(props: VSCXDetailHeader.Props) {
+    constructor(props: VSXRegistryDetailHeader.Props) {
         super(props);
 
         this.progressLocation = this.props.id;
@@ -45,28 +45,28 @@ export class VSCXDetailHeader extends React.Component<VSCXDetailHeader.Props, VS
         const extension = this.props.extension as VSCodeExtensionFullResolved;
         return <React.Fragment>
             <div ref={this.detailHeaderRef}>
-                <div className='extensionHeaderContainer'>
+                <div className='extension-header-container'>
                     {
                         extension.iconUrl ?
-                            <div className='extensionHeaderImage'>
+                            <div className='extension-header-image'>
                                 <div className='icon'>
                                     <img src={extension.iconUrl} />
                                 </div>
                             </div> : ''
                     }
                     <div className='extensionMetaDataContainer'>
-                        <div className='extensionTitleContainer'>
-                            <h1 className='extensionName'>{extension.name}</h1>
-                            <div className='extensionSubtitle'>
-                                <div className='extensionAuthor'>{extension.publisher}</div>
-                                <span className='textDivider' />
-                                <div className='extensionVersion'>{extension.version}</div>
+                        <div className='extension-title-container'>
+                            <h1 className='extension-name'>{extension.name}</h1>
+                            <div className='extension-subtitle'>
+                                <div className='extension-author'>{extension.publisher}</div>
+                                <span className='text-divider' />
+                                <div className='extension-version'>{extension.version}</div>
                                 {
                                     extension.averageRating ?
                                         <React.Fragment>
-                                            <span className='textDivider' />
-                                            <div className='extensionRatingStars'>
-                                                <VSCXStars number={extension.averageRating} />
+                                            <span className='text-divider' />
+                                            <div className='extension-rating-stars'>
+                                                <VSCodeExtensionStars number={extension.averageRating} />
                                             </div>
                                         </React.Fragment>
                                         : ''
@@ -74,7 +74,7 @@ export class VSCXDetailHeader extends React.Component<VSCXDetailHeader.Props, VS
                                 {
                                     extension.repository ?
                                         <React.Fragment>
-                                            <span className='textDivider' />
+                                            <span className='text-divider' />
                                             <a href={extension.repository} target='_blank'>Repository</a>
                                         </React.Fragment>
                                         : ''
@@ -82,15 +82,15 @@ export class VSCXDetailHeader extends React.Component<VSCXDetailHeader.Props, VS
                                 {
                                     extension.license ?
                                         <React.Fragment>
-                                            <span className='textDivider' />
+                                            <span className='text-divider' />
                                             {extension.license}
                                         </React.Fragment>
                                         : ''
                                 }
                             </div>
                         </div>
-                        <div className='extensionDescription'>{extension.description}</div>
-                        <VSCXInstallButton
+                        <div className='extension-description'>{extension.description}</div>
+                        <VSXRegistryInstallButton
                             extension={extension}
                             service={this.props.service}
                             progressService={this.props.progressService} progressLocation={this.progressLocation} />
@@ -101,12 +101,12 @@ export class VSCXDetailHeader extends React.Component<VSCXDetailHeader.Props, VS
     }
 }
 
-export namespace VSCXDetailHeader {
+export namespace VSXRegistryDetailHeader {
     export interface Props {
         id: string;
         toDispose: DisposableCollection;
         extension: VSCodeExtensionPartResolved;
-        service: VSCodeExtensionsService;
+        service: VSXRegistryService;
         progressService: ProgressService;
         progressLocationService: ProgressLocationService;
     }

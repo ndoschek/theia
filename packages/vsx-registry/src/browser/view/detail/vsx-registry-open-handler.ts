@@ -17,10 +17,10 @@
 import { injectable } from 'inversify';
 import URI from '@theia/core/lib/common/uri';
 import { WidgetOpenHandler, WidgetOpenerOptions } from '@theia/core/lib/browser';
-import { VSCodeExtensionDetailWidget } from './vscode-extensions-detail-widget';
-import { VSCodeExtensionDetailWidgetOptions } from './vscode-extension-detail-widget-factory';
+import { VSXRegistryDetailWidget } from './vsx-registry-detail-widget';
+import { VSXRegistryDetailWidgetOptions } from './vsx-registry-detail-widget-factory';
 
-export namespace VSCodeExtensionUri {
+export namespace VSXRegistryUri {
     export const scheme = 'vscode';
     export function toUri(extensionName: string): URI {
         return new URI('').withScheme(scheme).withPath('extension/' + extensionName);
@@ -33,23 +33,23 @@ export namespace VSCodeExtensionUri {
     }
 }
 
-export type VSCodeExtensionDetailOpenerOptions = WidgetOpenerOptions & VSCodeExtensionDetailWidgetOptions;
+export type VSXRegistryDetailOpenerOptions = WidgetOpenerOptions & VSXRegistryDetailWidgetOptions;
 
 @injectable()
-export class VSCodeExtensionOpenHandler extends WidgetOpenHandler<VSCodeExtensionDetailWidget> {
+export class VSXRegistryOpenHandler extends WidgetOpenHandler<VSXRegistryDetailWidget> {
 
-    readonly id = VSCodeExtensionUri.scheme;
+    readonly id = VSXRegistryUri.scheme;
 
     canHandle(uri: URI): number {
         try {
-            VSCodeExtensionUri.toExtensionName(uri);
+            VSXRegistryUri.toExtensionName(uri);
             return 500;
         } catch {
             return 0;
         }
     }
 
-    protected createWidgetOptions(uri: URI, options: VSCodeExtensionDetailOpenerOptions): VSCodeExtensionDetailWidgetOptions {
+    protected createWidgetOptions(uri: URI, options: VSXRegistryDetailOpenerOptions): VSXRegistryDetailWidgetOptions {
         return {
             url: options.url
         };

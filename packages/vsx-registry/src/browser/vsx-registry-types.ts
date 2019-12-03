@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import { VSCodeExtensionsModel } from './vscode-extensions-model';
+import { VSXRegistryModel } from './vsx-registry-model';
 
 export class VSCodeExtensionPart {
     readonly name: string;
@@ -47,15 +47,15 @@ export class VSCodeExtensionFull extends VSCodeExtensionPart {
     readonly galleryColor?: string;
     readonly galleryTheme?: string;
     readonly qna?: string;
-    readonly badges?: Badge[];
-    readonly dependencies?: ExtensionReference[];
-    readonly bundledExtensions?: ExtensionReference[];
+    readonly badges?: VSCodeExtensionBadge[];
+    readonly dependencies?: VSCodeExtensionReference[];
+    readonly bundledExtensions?: VSCodeExtensionReference[];
 }
 
 export class VSCodeExtensionPartResolved extends VSCodeExtensionPart {
     outdated?: boolean;
 
-    constructor(extension: VSCodeExtensionPart, protected model: VSCodeExtensionsModel) {
+    constructor(extension: VSCodeExtensionPart, protected model: VSXRegistryModel) {
         super();
         Object.assign(this, extension);
     }
@@ -69,19 +69,19 @@ export class VSCodeExtensionPartResolved extends VSCodeExtensionPart {
 
 export type VSCodeExtensionFullResolved = VSCodeExtensionPartResolved & VSCodeExtensionFull;
 
-export interface Badge {
+export interface VSCodeExtensionBadge {
     url: string;
     href: string;
     description: string;
 }
 
-export interface ExtensionReference {
+export interface VSCodeExtensionReference {
     publisher: string;
     extension: string;
     version?: string;
 }
 
-export interface SearchParam {
+export interface VSXRegistrySearchParam {
     query?: string;
     size?: number;
     offset?: number;
@@ -102,4 +102,4 @@ export interface VSCodeExtensionReviewList {
     reviews: VSCodeExtensionReview[];
 }
 
-export type VSCodeExtensionsLocation = 'installed' | 'registry';
+export type VSXRegistryExtensionLocation = 'installed' | 'registry';

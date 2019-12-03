@@ -17,13 +17,13 @@
 import { injectable, inject } from 'inversify';
 import { MessageService, Command, CommandRegistry } from '@theia/core';
 import { AbstractViewContribution } from '@theia/core/lib/browser/shell/view-contribution';
-import { VSCodeExtensionsWidget } from './view/list/vscode-extensions-widget';
+import { VSXRegistryWidget } from './view/list/vsx-registry-widget';
 import { Widget } from '@theia/core/lib/browser';
-import { VSCodeExtensionsService } from './vscode-extensions-service';
+import { VSXRegistryService } from './vsx-registry-service';
 
 export namespace VSCodeExtensionsCommands {
     export const CLEAR_ALL: Command = {
-        id: 'vscode-extensions.clear-all',
+        id: 'vsx-registry.clear-all',
         category: 'Extensions',
         label: 'Clear Search Results',
         iconClass: 'clear-all'
@@ -31,15 +31,15 @@ export namespace VSCodeExtensionsCommands {
 }
 
 @injectable()
-export class VSCodeExtensionsContribution extends AbstractViewContribution<VSCodeExtensionsWidget> {
+export class VSXRegistryContribution extends AbstractViewContribution<VSXRegistryWidget> {
 
     @inject(MessageService) protected readonly messageService: MessageService;
-    @inject(VSCodeExtensionsService) protected readonly service: VSCodeExtensionsService;
+    @inject(VSXRegistryService) protected readonly service: VSXRegistryService;
 
     constructor() {
         super({
-            widgetId: VSCodeExtensionsWidget.ID,
-            widgetName: VSCodeExtensionsWidget.LABEL,
+            widgetId: VSXRegistryWidget.ID,
+            widgetName: VSXRegistryWidget.LABEL,
             defaultWidgetOptions: {
                 area: 'left',
                 rank: 500
@@ -58,8 +58,8 @@ export class VSCodeExtensionsContribution extends AbstractViewContribution<VSCod
         });
     }
 
-    protected withWidget<T>(widget: Widget | undefined = this.tryGetWidget(), fn: (widget: VSCodeExtensionsWidget) => T): T | false {
-        if (widget instanceof VSCodeExtensionsWidget && widget.id === VSCodeExtensionsWidget.ID) {
+    protected withWidget<T>(widget: Widget | undefined = this.tryGetWidget(), fn: (widget: VSXRegistryWidget) => T): T | false {
+        if (widget instanceof VSXRegistryWidget && widget.id === VSXRegistryWidget.ID) {
             return fn(widget);
         }
         return false;

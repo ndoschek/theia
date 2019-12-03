@@ -15,13 +15,13 @@
  ********************************************************************************/
 
 import * as React from 'react';
-import { VSCodeExtensionPartResolved } from '../vscode-extensions-types';
-import { VSCodeExtensionsService } from '../vscode-extensions-service';
+import { VSCodeExtensionPartResolved } from '../vsx-registry-types';
+import { VSXRegistryService } from '../vsx-registry-service';
 import { ProgressService } from '@theia/core/lib/common';
 
-export class VSCXInstallButton extends React.Component<VSCXInstallButton.Props, VSCXInstallButton.States> {
+export class VSXRegistryInstallButton extends React.Component<VSXRegistryInstallButton.Props, VSXRegistryInstallButton.States> {
 
-    constructor(props: VSCXInstallButton.Props) {
+    constructor(props: VSXRegistryInstallButton.Props) {
         super(props);
 
         this.state = {
@@ -30,8 +30,8 @@ export class VSCXInstallButton extends React.Component<VSCXInstallButton.Props, 
     }
 
     render(): JSX.Element {
-        return <div className='extensionButtonContainer'>
-            <div className='extensionButtonRow'>
+        return <div className='extension-button-container'>
+            <div className='extension-button-row'>
                 {this.createButtons(this.props.extension as VSCodeExtensionPartResolved)}
             </div>
         </div>;
@@ -64,7 +64,7 @@ export class VSCXInstallButton extends React.Component<VSCXInstallButton.Props, 
 
         buttonArr.push(<div
             key={'extensionDetailBtn' + btnLabel}
-            className={'theia-button extensionButton' +
+            className={'theia-button extension-button' +
                 (this.state.busy ? ' working' : '') + ' ' +
                 (extension.installed && !this.state.busy ? ' installed' : '') + ' ' +
                 (extension.outdated && !this.state.busy ? ' outdated' : '')}
@@ -79,10 +79,10 @@ export class VSCXInstallButton extends React.Component<VSCXInstallButton.Props, 
     }
 }
 
-export namespace VSCXInstallButton {
+export namespace VSXRegistryInstallButton {
     export interface Props {
         extension: VSCodeExtensionPartResolved,
-        service: VSCodeExtensionsService,
+        service: VSXRegistryService,
         progressService: ProgressService,
         progressLocation: string
     }
