@@ -265,8 +265,6 @@ export class CommandRegistry implements CommandService {
 
     /**
      * Execute the active handler for the given command and arguments.
-     *
-     * Reject if a command cannot be executed.
      */
     // tslint:disable-next-line:no-any
     async executeCommand<T>(commandId: string, ...args: any[]): Promise<T | undefined> {
@@ -281,7 +279,7 @@ export class CommandRegistry implements CommandService {
             return result;
         }
         const argsMessage = args && args.length > 0 ? ` (args: ${JSON.stringify(args)})` : '';
-        throw new Error(`The command '${commandId}' cannot be executed. There are no active handlers available for the command.${argsMessage}`);
+        console.error(`The command '${commandId}' cannot be executed. There are no active handlers available for the command.${argsMessage}`);
     }
 
     protected async fireWillExecuteCommand(commandId: string): Promise<void> {

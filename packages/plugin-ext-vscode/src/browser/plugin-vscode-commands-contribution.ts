@@ -30,6 +30,7 @@ import { WorkspaceCommands } from '@theia/workspace/lib/browser';
 import { DiffService } from '@theia/workspace/lib/browser/diff-service';
 import { inject, injectable } from 'inversify';
 import URI from 'vscode-uri';
+import { MonacoEditorProvider } from '@theia/monaco/lib/browser/monaco-editor-provider';
 
 export namespace VscodeCommands {
     export const OPEN: Command = {
@@ -63,6 +64,8 @@ export class PluginVscodeCommandsContribution implements CommandContribution {
     protected readonly openerService: OpenerService;
     @inject(ApplicationShellMouseTracker)
     protected readonly mouseTracker: ApplicationShellMouseTracker;
+    @inject(MonacoEditorProvider)
+    protected readonly monacoEditors: MonacoEditorProvider;
 
     registerCommands(commands: CommandRegistry): void {
         commands.registerCommand(VscodeCommands.OPEN, {
@@ -136,6 +139,14 @@ export class PluginVscodeCommandsContribution implements CommandContribution {
         });
         commands.registerCommand({ id: 'workbench.action.files.openFolder' }, {
             execute: () => commands.executeCommand(WorkspaceCommands.OPEN_FOLDER.id)
+        });
+        commands.registerCommand({ id: 'default:type' }, {
+            execute: args => {
+                const editor = this.monacoEditors.current;
+                if (editor) {
+                    editor.trigger('keyboard', 'type', args);
+                }
+            }
         });
         commands.registerCommand({ id: 'workbench.action.files.save', }, {
             execute: (uri?: monaco.Uri) => {
